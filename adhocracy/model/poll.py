@@ -2,7 +2,7 @@ import logging
 from datetime import datetime
 
 from sqlalchemy import Table, Column, ForeignKey, or_
-from sqlalchemy import DateTime, Integer, Unicode
+from sqlalchemy import DateTime, Integer, Unicode, Boolean
 from sqlalchemy.orm import reconstructor, eagerload
 
 import meta
@@ -18,7 +18,8 @@ poll_table = Table('poll', meta.data,
     Column('user_id', Integer, ForeignKey('user.id'), nullable=False),
     Column('action', Unicode(50), nullable=False),
     Column('subject', Unicode(254), nullable=False),
-    Column('scope_id', Integer, ForeignKey('delegateable.id'), nullable=False)
+    Column('scope_id', Integer, ForeignKey('delegateable.id'), nullable=False),
+    Column('secret', Boolean, default=False)
     )
 
 
@@ -212,10 +213,12 @@ class Poll(object):
                     tally=self.tally,
                     url=h.entity_url(self),
                     scope=self.scope,
-                    subject=self.subject)
+                    subject=self.subject,
+                    secret=self.secret)
 
     def __repr__(self):
-        return u"<Poll(%s,%s,%s,%s)>" % (self.id,
+        return u"<Poll(%s,%s,%s,%s,secret=%s)>" % (self.id,
                                          self.scope_id,
                                          self.begin_time,
-                                         self.end_time)
+                                         self.end_time,
+                                         self.secret)

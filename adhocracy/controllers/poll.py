@@ -52,6 +52,13 @@ class PollController(BaseController):
     def update(self, id, format='html'):
         return self.not_implemented(format=format)
 
+    def make_voting_secret(self, id):
+        c.poll = get_entity_or_abort(model.Poll, id)
+        c.poll.secret = True
+        model.meta.Session.add(c.poll)
+        model.meta.Session.commit()
+        redirect(h.entity_url(c.poll.subject))
+
     @RequireInstance
     def show(self, id, format='html'):
         poll = get_entity_or_abort(model.Poll, id)
@@ -134,7 +141,8 @@ class PollController(BaseController):
     @validate(schema=PollVotesFilterForm(), post_only=False, on_get=True)
     def votes(self, id, format='html'):
         c.poll = get_entity_or_abort(model.Poll, id)
-
+        if c.poll.secret:
+            redirect(h.entity_url(c.poll.subject))
         # cover over data inconsistency because of a bug where pages (norms)
         # where deleted when a proposal was deleted.
         # Fixes http://trac.adhocracy.de/ticket/262
