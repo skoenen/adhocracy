@@ -42,7 +42,9 @@ instance_table = \
           Column('milestones', Boolean, default=False),
           Column('use_norms', Boolean, nullable=True, default=True),
           Column('require_selection', Boolean, nullable=True, default=False),
-          Column('is_authenticated', Boolean, nullable=True, default=False)
+          Column('is_authenticated', Boolean, nullable=True, default=False),
+          Column('hide_global_categories', Boolean, nullable=True, default=False),
+          Column('editable_comments_default', Boolean, nullable=True, default=True)
           )
 
 
@@ -53,7 +55,7 @@ instance_table = \
 class Instance(meta.Indexable):
     __tablename__ = 'instance'
 
-    INSTANCE_KEY = re.compile("^[a-zA-Z][a-zA-Z0-9_]{2,18}$")
+    INSTANCE_KEY = re.compile("^[a-zA-Z][a-zA-Z0-9-]{2,18}$")
 
     def __init__(self, key, label, creator, description=None):
         self.key = key
@@ -240,6 +242,7 @@ class Instance(meta.Indexable):
         return d
 
     def to_index(self):
+        from adhocracy.lib.event import stats as estats
         index = super(Instance, self).to_index()
         if self.hidden:
             index['skip'] = True
@@ -248,7 +251,8 @@ class Instance(meta.Indexable):
             title=self.label,
             tags=[],
             body=self.description,
-            user=self.creator.user_name
+            user=self.creator.user_name,
+            activity=estats.instance_activity(self)
         ))
         return index
 

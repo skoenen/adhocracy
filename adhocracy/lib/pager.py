@@ -6,6 +6,7 @@ import time
 import urllib
 
 from formencode import validators
+from paste.deploy.converters import asbool
 from pylons.i18n import _, lazy_ugettext, lazy_ugettext as L_
 from pylons import config, request, tmpl_context as c, url
 from pylons.controllers.util import redirect
@@ -13,15 +14,18 @@ from webob.multidict import MultiDict
 
 from adhocracy import model
 from adhocracy.lib import sorting, tiles
+from adhocracy.lib.helpers import base_url
 from adhocracy.lib.event.stats import user_activity
 from adhocracy.lib.search.query import sunburnt_query, add_wildcard_query
 from adhocracy.lib.templating import render_def
+from adhocracy.lib.util import generate_sequence
 from adhocracy.model.refs import ref_attr_value
 
 log = logging.getLogger(__name__)
 
+MAX_SIZE = 500
 PAGE_VALIDATOR = validators.Int(min=1, not_empty=True)
-SIZE_VALIDATOR = validators.Int(min=1, max=250, not_empty=True)
+SIZE_VALIDATOR = validators.Int(min=1, max=MAX_SIZE, not_empty=True)
 
 
 marker = object()
@@ -91,18 +95,18 @@ class PagerMixin(object):
         return self.render_pager()
 
     def page_sizes(self):
-        if self.initial_size >= self.total_num_items():
+        total = self.total_num_items()
+
+        if self.initial_size >= total:
             return []
+
         page_sizes = []
-        # offer page sizes: from the initial size to either half of the
-        # total size or 5 x the initial size.
-        sizes = range(self.initial_size,
-                      min(self.total_num_items() + self.initial_size / 2,
-                          (self.initial_size * 5)) + 1,
-                      self.initial_size / 2)
+        sizes = generate_sequence(minimum=self.initial_size,
+                                  maximum=min(total, MAX_SIZE))
+
         for size in sizes:
             page_sizes.append(
-                {'class': 'selected' if size == self.size else '',
+                {'current': size == self.size,
                  'url': self.build_url(size=size),
                  'size': size,
                  'last': False})
@@ -148,13 +152,7 @@ class PagerMixin(object):
         # sanitize the the query arguments
         query_items = ([(str(key), unicode(value).encode('utf-8')) for
                         (key, value) in query.items()])
-        url_base = url.current(qualified=True)
-        protocol = config.get('adhocracy.protocol', 'http').strip()
-        if ', ' in url_base:
-            # hard coded fix for enquetebeteiligung.de
-            url_base = '%s://%s' % (protocol, url_base.split(', ')[1])
-        else:
-            url_base = '%s://%s' % (protocol, url_base.split('://')[1])
+        url_base = base_url(url.current(qualified=False))
         return url_base + "?" + urllib.urlencode(query_items)
 
     def to_dict(self):
@@ -274,8 +272,7 @@ def instances(instances):
 def proposals(proposals, default_sort=None, **kwargs):
     if default_sort is None:
         default_sort = sorting.proposal_mixed
-    sorts = {  # _("oldest"): sorting.entity_oldest,
-             _("newest"): sorting.entity_newest,
+    sorts = {_("newest"): sorting.entity_newest,
              _("newest comment"): sorting.delegateable_latest_comment,
              _("most support"): sorting.proposal_support,
              _("mixed"): sorting.proposal_mixed,
@@ -287,10 +284,7 @@ def proposals(proposals, default_sort=None, **kwargs):
 def milestones(milestones, default_sort=None, **kwargs):
     if default_sort is None:
         default_sort = sorting.milestone_time
-    sorts = {  # _("oldest"): sorting.entity_oldest,
-             _("by date"): sorting.milestone_time,
-             _("newest"): sorting.entity_newest,
-             _("oldest"): sorting.entity_oldest,
+    sorts = {_("by date"): sorting.milestone_time,
              _("alphabetically"): sorting.delegateable_title}
     return NamedPager('milestones', milestones, tiles.milestone.row,
                       sorts=sorts, default_sort=default_sort, **kwargs)
@@ -304,7 +298,7 @@ def pages(pages, detail=True, default_sort=None, **kwargs):
              _("alphabetically"): sorting.delegateable_title,
              _("hierarchical"): sorting.hierarchical_title}
     return NamedPager('pages', pages, tiles.page.row, sorts=sorts,
-                    default_sort=default_sort, **kwargs)
+                      default_sort=default_sort, **kwargs)
 
 
 def users(users, instance):
@@ -315,7 +309,7 @@ def users(users, instance):
              _("alphabetically"): sorting.user_name}
 
     return NamedPager('users', users, tiles.user.row, sorts=sorts,
-                      initial_size=15, default_sort=sorting.user_name)
+                      initial_size=20, default_sort=sorting.user_name)
 
 
 def user_decisions(decisions):
@@ -346,15 +340,15 @@ def delegations(delegations):
                       default_sort=sorting.entity_newest)
 
 
-def events(events):
-    return NamedPager('events', events, tiles.event.row)
+def events(events, **kwargs):
+    return NamedPager('events', events, tiles.event.row, **kwargs)
 
 
 def polls(polls, default_sort=None, **kwargs):
     if default_sort is None:
         default_sort = sorting.polls_time
     return NamedPager('polls', polls, tiles.poll.row,
-                    default_sort=default_sort, **kwargs)
+                      default_sort=default_sort, **kwargs)
 
 
 # --[ solr pager ]----------------------------------------------------------
@@ -566,6 +560,7 @@ class SolrFacet(SolrIndexer):
             item['disabled'] = (item['current_count'] == 0)
             item['selected'] = item['value'] in self.used
             item['url'] = self.get_item_url(item)
+            item['visible'] = getattr(entity, 'visible', 'default')
 
             result.append(item)
 
@@ -699,7 +694,11 @@ class DelegateableBadgeCategoryFacet(SolrFacet):
     entity_type = model.Badge
     title = lazy_ugettext(u'Categories')
     solr_field = 'facet.delegateable.badgecategory'
-    show_current_empty = False
+    
+    @property
+    def show_current_empty(self):
+        return not asbool(config.get(
+            'adhocracy.hide_empty_categories_in_facet_list', 'false'))
 
     @classmethod
     def add_data_to_index(cls, entity, data):
@@ -1155,11 +1154,11 @@ ALPHA = SortOption('order.title', L_("Alphabetically"))
 PROPOSAL_SUPPORT = SortOption('-order.proposal.support', L_("Most Support"),
                               description=L_('Yays - nays'))
 PROPOSAL_VOTES = SortOption('-order.proposal.votes', L_("Most Votes"),
-                              description=L_('Yays + nays'))
+                            description=L_('Yays + nays'))
 PROPOSAL_YES_VOTES = SortOption('-order.proposal.yesvotes', L_("Most Ayes"))
 PROPOSAL_NO_VOTES = SortOption('-order.proposal.novotes', L_("Most Nays"))
 PROPOSAL_MIXED = SortOption('-order.proposal.mixed', L_('Mixed'),
-                              description=L_('Age and Support'))
+                            description=L_('Age and Support'))
 
 USER_SORTS = NamedSort([[None, (OLDEST(old=1),
                                 NEWEST(old=2),
@@ -1170,11 +1169,11 @@ USER_SORTS = NamedSort([[None, (OLDEST(old=1),
 
 
 INSTANCE_SORTS = NamedSort([[None, (OLDEST(old=1),
-                                NEWEST(old=2),
-                                ACTIVITY(old=3),
-                                ALPHA(old=4))]],
-                                default=ACTIVITY,
-                       mako_def="sort_dropdown")
+                                    NEWEST(old=2),
+                                    ACTIVITY(old=3),
+                                    ALPHA(old=4))]],
+                           default=ACTIVITY,
+                           mako_def="sort_dropdown")
 
 
 PROPOSAL_SORTS = NamedSort([[L_('Support'), (PROPOSAL_SUPPORT(old=2),
@@ -1216,7 +1215,7 @@ def solr_instance_pager():
     sorts = {"ALPHA": ALPHA,
              "ACTIVITY": ACTIVITY,
              "NEWEST": NEWEST,
-             "OLDEST": OLDEST,}
+             "OLDEST": OLDEST}
     instance_sorts = copy.copy(INSTANCE_SORTS)
     if custom_default and custom_default in sorts:
         instance_sorts._default = sorts[custom_default].value
@@ -1236,10 +1235,10 @@ def solr_proposal_pager(instance, wildcard_queries=None):
                       sorts=PROPOSAL_SORTS,
                       extra_filter=extra_filter,
                       facets=[DelegateableBadgeCategoryFacet,
+                              DelegateableMilestoneFacet,
                               DelegateableBadgeFacet,
                               DelegateableAddedByBadgeFacet,
-                              DelegateableTags,
-                              DelegateableMilestoneFacet],
+                              DelegateableTags],
                       wildcard_queries=wildcard_queries)
     return pager
 
