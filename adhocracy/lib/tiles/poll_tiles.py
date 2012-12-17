@@ -171,6 +171,12 @@ class PollTile(BaseTile):
         return ("%(url)s?position=%(position)d&"
                 "%(token_param)s&cls=%(cls)s") % params
 
+    def secret_url( self, poll ):
+        params = {'url': h.entity_url(poll, member='make_voting_secret'),
+                  'token_param': h.url_token(),
+                  'cls': self.widget_size}
+        return ("%(url)s?%(token_param)s&cls=%(cls)s") % params
+
     @property
     def votes_listing_url(self):
         return h.entity_url(self.poll, member="votes")

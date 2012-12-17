@@ -34,6 +34,9 @@ class PollVoteForm(formencode.Schema):
     position = validators.Int(min=model.Vote.NO, max=model.Vote.YES,
                               not_empty=True)
 
+class PollSecretForm(formencode.Schema):
+    allow_extra_fields = True
+
 
 class PollController(BaseController):
 
@@ -52,11 +55,16 @@ class PollController(BaseController):
     def update(self, id, format='html'):
         return self.not_implemented(format=format)
 
+    @RequireInstance
+    @RequireInternalRequest()
+    @validate(schema=PollSecretForm(), form="bad_request",
+              post_only=False, on_get=True)
     def make_voting_secret(self, id):
         c.poll = get_entity_or_abort(model.Poll, id)
-        c.poll.secret = True
-        model.meta.Session.add(c.poll)
-        model.meta.Session.commit()
+        if c.poll.tally.score == 0:
+            c.poll.secret = True
+            model.meta.Session.add(c.poll)
+            model.meta.Session.commit()
         redirect(h.entity_url(c.poll.subject))
 
     @RequireInstance
