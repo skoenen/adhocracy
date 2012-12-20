@@ -186,6 +186,9 @@ def make_map(config):
     map.connect('/poll/{id}/rate{.format}', controller='poll', action='rate',
                 conditions=dict(method=['GET', 'POST']))
 
+    map.connect('/poll/{id}/secret{.format}', controller='poll', action='secret',
+                conditions=dict(method=['GET', 'POST']))
+
     map.connect('/poll/{id}/widget{.format}', controller='poll',
                 action='widget', conditions=dict(method=['GET', 'POST']))
 

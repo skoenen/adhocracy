@@ -18,7 +18,7 @@ con = tile.widget_action_attrs(model.Vote.NO)
         href="${tile.votes_listing_url}"
         rel="#overlay-ajax"
         %else:
-        href="#"
+        href=""
         %endif
     class="vote_count ${tile.count_class}"
           >${tile.display_score}</a
@@ -40,7 +40,7 @@ con = tile.widget_action_attrs(model.Vote.NO)
 
 <span class="seperator">|</span>
 %if not poll.secret:
-<a href="/poll/make_voting_secret/${poll.id}"
+<a href="${tile.secret_url(poll)}"
     class="button delegate vote-secret">${_('Make the votes secret!')}</a>
 %else:
 <span class="secret">${_('Voting is secret')}</span>

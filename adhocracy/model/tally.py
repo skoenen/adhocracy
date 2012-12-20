@@ -35,6 +35,9 @@ class Tally(object):
         self.num_against = num_against
         self.num_abstain = num_abstain
 
+    def destroy( self ):
+        pass
+
     def _get_rel_for(self):
         base = self.num_for + self.num_against
         if base == 0:

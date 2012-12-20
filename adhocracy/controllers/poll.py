@@ -59,7 +59,7 @@ class PollController(BaseController):
     @RequireInternalRequest()
     @validate(schema=PollSecretForm(), form="bad_request",
               post_only=False, on_get=True)
-    def make_voting_secret(self, id):
+    def secret(self, id):
         c.poll = get_entity_or_abort(model.Poll, id)
         if c.poll.tally.score == 0:
             c.poll.secret = True

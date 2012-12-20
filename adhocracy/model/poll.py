@@ -118,6 +118,12 @@ class Poll(object):
         return (self.end_time is not None) \
                and self.end_time <= at_time
 
+    def clear_votes( self ):
+        if not self._tally:
+            for tally in self.tallies:
+                tally.destroy
+            self._tally = None
+
     def delete(self, delete_time=None):
         return self.end(end_time=delete_time)
 
