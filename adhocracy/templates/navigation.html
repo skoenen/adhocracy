@@ -52,7 +52,7 @@
                            li_class=_class('about'),
                            id_="nav_about")}
                 <!--TODO: remove dummy link to merge in new links with diazo themeing-->
-                <li id="nav_dummy" style="display: none;" />
+                <li id="nav_dummy" style="display: none;"></li>
                 ${nav_link(href=h.base_url('/static/help.html', None),
                            text=_("Help"),
                            a_class='staticlink_help',
@@ -174,11 +174,11 @@
 <%def name="subheader_instance_navigation(active)">
 
 <% 
-   import markupsafe
+   import cgi
    from adhocracy.lib.tiles.instance_tiles import InstanceTile
    active_subnav = {}
    active_subnav[active or 'instance'] = 'current'
-   search_label = _('Search in &ldquo;%s&rdquo;&hellip;') % markupsafe.escape(c.instance.label)
+   search_label = _('Search in &ldquo;%s&rdquo;&hellip;') % cgi.escape(c.instance.label)
    logo = ''
    url = None
    if c.instance:
@@ -205,17 +205,17 @@
              li_class=_class('proposals'),
              id_='subnav-proposals')}
 
-  ${nav_link(href=h.base_url('/page'),
-             text=_("Norms"),
-             li_class=_class('norms'),
-             condition=c.instance.use_norms,
-             id_='subnav-norms')}
-
   ${nav_link(href=h.base_url('/milestone'),
              text=_("Milestones"),
              li_class=_class('milestones'),
              condition=c.instance.milestones,
              id_='subnav-milestones')}
+
+  ${nav_link(href=h.base_url('/page'),
+             text=_("Norms"),
+             li_class=_class('norms'),
+             condition=c.instance.use_norms,
+             id_='subnav-norms')}
 
   ${nav_link(href=h.base_url('/user'),
              text=_("Members"),
