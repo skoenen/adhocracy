@@ -34,6 +34,10 @@ class Vote(object):
         self.orientation = orientation
         self.delegation = delegation
 
+    def delete(self):
+        meta.Session.delete(self)
+        meta.Session.commit()
+
     @classmethod
     def find(cls, id, instance_filter=True, include_deleted=False):
         try:

@@ -19,7 +19,9 @@ poll_table = Table('poll', meta.data,
     Column('action', Unicode(50), nullable=False),
     Column('subject', Unicode(254), nullable=False),
     Column('scope_id', Integer, ForeignKey('delegateable.id'), nullable=False),
-    Column('secret', Boolean, default=False)
+    Column('secret', Boolean, default=False),
+    Column('secret_requestor', Integer, ForeignKey('user.id')),
+    Column('secret_request_date', DateTime)
     )
 
 
@@ -97,6 +99,11 @@ class Poll(object):
                 self._tally = Tally.create_from_poll(self)
         return self._tally
 
+    @property
+    def votes(self):
+        from votes import Votes
+        return Votes.all().filter_by(poll_id = self.id)
+
     def can_end(self):
         if self.has_ended():
             return False
@@ -119,10 +126,15 @@ class Poll(object):
                and self.end_time <= at_time
 
     def clear_votes( self ):
-        if not self._tally:
-            for tally in self.tallies:
-                tally.destroy
-            self._tally = None
+        votes = self.votes
+        tallies = self.tallies
+        for vote in votes:
+            vote.delete()
+        for tally in tallies:
+            tally.delete()
+
+        from tally import Tally
+        self._tally = Tally.create_from_poll(self)
 
     def delete(self, delete_time=None):
         return self.end(end_time=delete_time)
@@ -144,6 +156,9 @@ class Poll(object):
                     tally.has_majority()):
                 return False
         return True
+
+    def is_clean(self):
+        return len(self.votes) == 0 and len(self.tallies) == 0
 
     def is_stable(self, at_time=None):
         if not at_time in self._stable:

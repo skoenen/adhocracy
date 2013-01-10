@@ -35,9 +35,6 @@ class Tally(object):
         self.num_against = num_against
         self.num_abstain = num_abstain
 
-    def destroy( self ):
-        pass
-
     def _get_rel_for(self):
         base = self.num_for + self.num_against
         if base == 0:
@@ -55,6 +52,10 @@ class Tally(object):
         return self.num_for - self.num_against
 
     score = property(_get_score)
+
+    def delete(self):
+        meta.Session.delete(self)
+        meta.Session.commit()
 
     @classmethod
     def create_from_vote(cls, vote):
