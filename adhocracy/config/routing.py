@@ -205,7 +205,8 @@ def make_map(config):
 
     map.resource('poll', 'poll', member={'votes': 'GET',
                                          'ask_delete': 'GET',
-                                         'widget': 'GET'})
+                                         'widget': 'GET',
+                                         'secret_requestor': 'GET'})
 
     map.connect('/badge', controller='badge', action='index',
                 conditions=dict(method=['GET']))

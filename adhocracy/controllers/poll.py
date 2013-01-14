@@ -68,12 +68,22 @@ class PollController(BaseController):
 
         if poll.is_clean():
             poll.secret = True
-            poll.secret_requestor = c.user
+            poll.secret_requestor = c.user.id
             poll.secret_request_date = datetime.utcnow()
-            model.meta.Session.add(poll)
-            #model.meta.Session.commit()
-            model.meta.Session.flush()
+            model.meta.Session.commit()
         redirect(h.entity_url(poll.subject))
+
+    @RequireInstance
+    def secret_requestor(self, id):
+        poll = get_entity_or_abort(model.Poll, id)
+        if poll.secret:
+            requestor = get_entity_or_abort(model.User, poll.secret_requestor)
+            return _("Secret voting was requested from {0} on {1} at {2}") \
+                    . format(requestor.name, \
+                             poll.secret_request_date.strftime("%d. %b %Y"),\
+                             poll.secret_request_date.strftime("%H:%M"))
+        else:
+            redirect(h.entity_url(poll.subject))
 
     @RequireInstance
     def show(self, id, format='html'):

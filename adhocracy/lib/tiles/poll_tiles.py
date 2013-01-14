@@ -182,6 +182,10 @@ class PollTile(BaseTile):
     def votes_listing_url(self):
         return h.entity_url(self.poll, member="votes")
 
+    @property
+    def secret_requestor_url(self):
+        return h.entity_url(self.poll, member="secret_requestor")
+
 
 def booth(poll):
     return render_tile('/poll/tiles.html', 'booth',
