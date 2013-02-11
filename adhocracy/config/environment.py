@@ -30,11 +30,13 @@ def load_environment(global_conf, app_conf, with_db=True):
     conf_copy.update(app_conf)
     site_templates = create_site_subdirectory('templates', app_conf=conf_copy)
     root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    client_containing = app_conf.get('adhocracy.client_location', os.path.dirname(root))
+    client_root = os.path.join(client_containing, 'adhocracy_client')
     paths = dict(root=root,
                  controllers=os.path.join(root, 'controllers'),
-                 static_files=os.path.join(root, 'static'),
+                 static_files=os.path.join(client_root, 'static'),
                  templates=[site_templates,
-                            os.path.join(root, 'templates')])
+                            os.path.join(client_root, 'templates')])
 
     # Initialize config with the basic options
     config = PylonsConfig()
