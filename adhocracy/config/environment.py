@@ -1,5 +1,6 @@
 """Pylons environment configuration"""
 import os
+import sys
 import time
 import traceback
 
@@ -37,6 +38,11 @@ def load_environment(global_conf, app_conf, with_db=True):
                  static_files=os.path.join(client_root, 'static'),
                  templates=[site_templates,
                             os.path.join(client_root, 'templates')])
+
+    # Load the client
+    sys.path.insert(0, client_containing)
+    import adhocracy_client
+    import adhocracy_client.static,adhocracy_client.templates
 
     # Initialize config with the basic options
     config = PylonsConfig()
