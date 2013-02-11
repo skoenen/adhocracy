@@ -46,7 +46,7 @@ def render_mako(template_name, data, extra_vars=None, cache_key=None,
         extra_vars['root_template'] = '/overlay.html'
 
     for k,v in data.items():
-        pylons.tmpl_context[k] = v
+        setattr(pylons.tmpl_context, k, v)
 
     page = pylons.templating.render_mako(template_name, extra_vars=extra_vars,
                        cache_key=cache_key, cache_type=cache_type,
