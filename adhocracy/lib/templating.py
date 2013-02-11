@@ -15,14 +15,14 @@ def render(template_name, data=_legacy, only_fragment=False):
     """ If only_fragment is set, render only the template itself, without
     surrounding header / footer etc."""
     if data is _legacy:
-        log.warn(u'Legacy call to render() - missing data')
+        #log.debug(u'Legacy call to render() - missing data')
         data = {}
 
     import adhocracy_client
     return adhocracy_client.render(template_name, data, only_fragment=only_fragment)
 
 def render_def(template_name, *args, **kwargs):
-    log.warn(u'Call to deprecated method render_def')
+    #log.debug(u'Call to deprecated method render_def')
     import adhocracy_client
     return adhocracy_client.render_def(template_name, *args, **kwargs)
 
