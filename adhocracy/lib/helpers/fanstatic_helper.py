@@ -30,10 +30,10 @@ class FanstaticNeedHelper(object):
 
     Use it this way::
 
-        need = FanstaticNeedHelper(fanstatic_resources)
+        need = FanstaticNeedHelper(static)
         need.stylesheets
 
-    where "fanstatic_resources" is a module with fanstatic.Group objects, and
+    where "static" is a module with fanstatic.Group objects, and
     "stylesheets" is one of these fanstatic Resource or Group objects.
     '''
 
