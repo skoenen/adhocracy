@@ -16,6 +16,8 @@ except Exception:
 
 from datetime import utcnow
 
+session_key = "adhocracy_session"
+
 class SessionMiddleware(object)
     _session_stack = adhocarcy_session
     _env_key = 'adhocracy.session.key'
@@ -25,7 +27,7 @@ class SessionMiddleware(object)
         self._app = app
         self._config = config or {}
 
-        self._session_key = self._config[self._env_key] or 'adhocracy_session'
+        session_key = self._config[self._env_key] or 'adhocracy_session'
         self._session_secret = self._config[self.secret_key] or ''
 
     def __call__(self, environ, start_response):
@@ -37,7 +39,7 @@ class SessionMiddleware(object)
                         self._session_stack,
                         session)
 
-        environ[self._session_key] = session
+        environ[session_key] = session
 
         def session_start_response(status, headers, exc_info=None):
             if session.changed():
@@ -98,27 +100,38 @@ class Session(object):
         return self._changed
 
     def set_hashed(self, key, value):
+        if hash_key not in hashlib.__dict__:
+            raise ConfigurationException(
+                "The configured hash function {0} is not implemented.".format(hash_key))
+
         hash_func = hashlib.__dict__[self._config[hash_key]]
 
-        clear_val = "%s%s%s" % value,
+        clear_val = "{0}{1}{2}" .format(value,
                             self._values['created_at'].isoformat(),
-                            self._secret
-        enc_val = "%s!!!%s" % hash_func(clear_val), value
+                            self._secret)
+        enc_val = "{0}!!!{1}" .format(hash_func(clear_val), value)
 
         self.__setitem__(key, hash_func(value))
         self._changed = True
 
     def get_hashed(self, key):
+        if hash_key not in hashlib.__dict__:
+            raise ConfigurationException(
+                "The configured hash function {0} is not implemented.".format(hash_key))
+
         hash_func = hashlib.__dict__[self._config[hash_key]]
 
         enc_val, value = self._values[key].split("!!!")
-        clear_val = "%s%s%s" % value,
+        clear_val = "{0}{1}{2}" .format(value,
                             self._values['created_at'].isoformat(),
-                            self._secret
+                            self._secret)
         if enc_val == hash_func(clear_val):
             return value
         else:
             return None
+
+    def get(key, default = None):
+        return self._values.get(key, default)
 
     def cookie(self):
         self._update_cookie()
