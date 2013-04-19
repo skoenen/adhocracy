@@ -1,51 +1,52 @@
 from adhocracy.tests import TestController
 from adhocracy.lib.session.converter import SignedValueConverter
 
+import json
+
 
 class SignedValueConverterTestController(TestController):
+    _test_string = "Alaska Sadelaere"
+    _test_encoded = "Alaska Sadelaere"
+    _test_algo = '"algo": "sha256"'
+    _test_value = '"value": "{0}"'.format(self._test_encoded)
+    _test_sign = '"sign": '
 
     def signed_value_with_no_secret(self):
-        ensigner = SignedValueConverter()
-        designer = SignedValueConverter()
+        signer = SignedValueConverter()
 
-        enval = ensigner.encode("Julian Tifflor")
-        deval = designer.encode("Julian Tifflor")
+        val = signer.encode(self._test_string)
 
-        self.assertEqual(
-                encryptor.encode("Fellmer Lyod"),
-                decryptor.encode("Fellmer Lyod"))
+        self.assertTrue(
+                self._test_algo in val and
+                self._test_value in val and
+                self._test_sign in val)
 
-        self.assertEqual(
-                encryptor.decode(deval),
-                decryptor.decode(enval))
+    def signed_value_with_secret(self):
+        signer = SignedValueConverter("secret")
 
-    def signed_value_with_same_secret(self):
-        encryptor = CryptValueConverter("secret")
-        decryptor = CryptValueConverter("secret")
+        val = signer.encode(self._test_string)
 
-        enval = encryptor.encode("Alaska Sadelaere")
-        deval = decryptor.encode("Alaska Sadelaere")
+        self.assertTrue(
+                self._test_algo in val and
+                self._test_value in val and
+                self._test_sign in val)
 
-        self.assertEqual(
-                encryptor.encode("Melbar Kasom"),
-                decryptor.encode("Melbar Kasom"))
+    def signed_value_with_invalid_sign(self):
+        signer = SignedValueConverter("secret")
 
-        self.assertEqual(
-                encryptor.decode(deval),
-                decryptor.decode(enval))
+        val = signer.encode(self._test_string)
 
-    def signed_value_with_different_secret(self):
-        encryptor = CryptValueConverter("secret")
-        decryptor = CryptValueConverter("Setec Astronomy")
+        obj = json.loads(val)
+        obj["sign"] = "af8907sajkh32uigfa97asekjejh4l2jk3hf9a87dfa6"
 
-        enval = encryptor.encode("Roi Danton")
-        deval = decryptor.encode("Roi Danton")
+        val = json.dumps(obj)
 
-        self.assertNotEqual(
-                encryptor.encode("Homer G. Adams"),
-                decryptor.encode("Homer G. Adams"))
+        self.assertIsNone(signer.decode(val))
 
-        self.assertNotEqual(
-                encryptor.decode(deval),
-                decryptor.decode(enval))
+    def signed_value_with_no_json(self):
+        signer = SignedValueConverter("secret")
+
+        val = "023nlaify90a86afa9s8dv"
+
+        self.assertIsNone(signer.decode(val))
 
