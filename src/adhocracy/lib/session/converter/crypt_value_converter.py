@@ -20,6 +20,7 @@ class CryptValueConverter(ValueConverter):
     _secret = None
     _secret_set = False
     _algorithm = Cipher.AES
+    _algorithm_id = "AES-CFB"
     _mode = Cipher.AES.MODE_CFB
     _iv = Random.new().read(_algorithm.block_size)
     _func_crypt = None
@@ -49,7 +50,7 @@ class CryptValueConverter(ValueConverter):
     def encode(self, value):
         return self._serialize({
                 "value": self._func_crypt.encrypt(self._crypt_value(value)),
-                "algo": self._algorithm})
+                "algo": self._algorithm_id})
 
     def decode(self, value):
         return self._unserialize(
