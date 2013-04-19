@@ -18,7 +18,7 @@ from adhocracy.lib.helpers.site_helper import base_url
 
 from beaker.middleware import CacheMiddleware
 from beaker.middleware import SessionMiddleware as BeakerSessionMiddleware
-from adhocracy.lib.session import SessionMiddleware as AdhocracySessionMiddleware
+from adhocracy.lib.session import SessionMiddleware as RESTSessionMiddleware
 
 
 def make_app(global_conf, full_stack=True, static_files=True, **app_conf):
@@ -57,11 +57,8 @@ def make_app(global_conf, full_stack=True, static_files=True, **app_conf):
     # Routing/Session/Cache Middleware
     app = RoutesMiddleware(app, config['routes.map'])
 
-    if config.get("adhocracy.session_implementation", "") == "adhocracy_session":
-        app = AdhocracySessionMiddleware(app, config)
-
-    # if configured adhocracy.session_implementation = beaker
-    # or complete commented out
+    if config.get("adhocracy.session_implementation", "beaker") == "rest":
+        app = RESTSessionMiddleware(app, config)
     else:
         app = BeakerSessionMiddleware(app, config)
         app = CacheMiddleware(app, config)
