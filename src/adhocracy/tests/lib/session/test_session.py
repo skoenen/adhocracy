@@ -9,8 +9,8 @@ class SessionTestController(TestController):
     _domain = "adhocracy.lan"
     _test_string = "\"'Perry' Rhodan\"☃⁋"
     _test_encoded = "\\\"\\'Perry\\' Rhodan\\\"\x2603\x204b"
-    _test_cookie_value = "President={0}; Domain=.adhocracy.lan".
-            format(self._test_cookie_value)
+    _test_cookie_value = "President={0}; Domain=.adhocracy.lan".format(
+            self._test_cookie_value)
     _test_cookie_header = "Set-Cookie: {0}".format(self._test_cookie_value)
 
     def _config(self, **add_config):
