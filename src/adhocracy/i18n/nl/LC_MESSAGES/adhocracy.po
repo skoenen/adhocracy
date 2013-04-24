@@ -2,16 +2,16 @@
 # Copyright (C) 2013 ORGANIZATION
 # This file is distributed under the same license as the adhocracy project.
 # Translators:
-# Mieke Van Heesewijk <>, 2012.
-#  <sicco@ddo.nl>, 2013.
-#   <sicco@ddo.nl>, 2012.
-#   <the.vole.anonymous@gmail.com>, 2012.
+# Mieke Van Heesewijk <>, 2012
+# sicco <sicco@ddo.nl>, 2013
+# sicco <sicco@ddo.nl>, 2012
+# The_Vole <the.vole.anonymous@gmail.com>, 2012
 msgid ""
 msgstr ""
 "Project-Id-Version: Adhocracy\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2013-02-18 01:48+0100\n"
-"PO-Revision-Date: 2013-02-18 00:49+0000\n"
+"POT-Creation-Date: 2013-04-19 02:22+0200\n"
+"PO-Revision-Date: 2013-04-19 00:23+0000\n"
 "Last-Translator: Nicolas Dietrich <nicodietrich@gmail.com>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -22,13 +22,21 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 msgid "Thank you for helping."
-msgstr "Dank u voor uw hulp."
+msgstr "Bedankt voor uw hulp."
 
 msgid "Please insert a subject for the mail we will send to the users."
 msgstr "Voeg alstublieft een onderwerp toe voor de e-mail die verstuurd zal worden naar de gebruikers."
 
 msgid "Please insert a template for the mail we will send to the users."
 msgstr "Voeg alstublieft een sjabloon toe voor de e-mail die verstuurd zal worden naar de gebruikers."
+
+msgid "Solr index updated."
+msgstr "Solr index bijgewerkt."
+
+msgid ""
+"Requested generation of welcome codes, but welcome "
+"functionality(adhocracy.enable_welcome) is not enabled."
+msgstr "Generatie van welkom codes is aangevraagd, maar welkom functionality(adhocracy.enable_welcome) is niet ingeschakeld."
 
 msgid "In all instances"
 msgstr "In alle groepen"
@@ -112,10 +120,10 @@ msgid "Instance created successfully. You can now configure it as you like."
 msgstr "Het aanmaken van de groep is gelukt. U kunt de configuratie nu naar wens aanpassen."
 
 msgid "Delegations are enabled."
-msgstr "Het geven van volmachten is toegestaan."
+msgstr "Het geven van volmachten is ingeschakeld."
 
 msgid "Delegations are disabled."
-msgstr "Het geven van volmachten is niet toegestaan."
+msgstr "Het geven van volmachten is uitgeschakeld."
 
 msgid "tutorial_instance_show_intro"
 msgstr "Welkom op de hoofdpagina van deze groep."
@@ -134,6 +142,9 @@ msgstr "Stemmen"
 
 msgid "Badges"
 msgstr "Badges"
+
+msgid "Mass message service"
+msgstr "Massa bericht dienst"
 
 msgid "Members import"
 msgstr "Gebruikers importeren"
@@ -188,6 +199,23 @@ msgstr "U heeft de %(instance)s verlaten."
 msgid "You cannot manipulate one instance from within another instance."
 msgstr "U kunt de ene groep niet bewerken vanuit een andere groep."
 
+msgid "Sorry, but you're not allowed to set these message options"
+msgstr "Sorry, maar het is u niet toegestaan om deze berichtinstellingen aan te passen"
+
+msgid "Email isn't activated"
+msgstr "E-mail is niet geactiveerd"
+
+msgid "Not permitted in system settings"
+msgstr "Niet toegestaan in de systeeminstellingen"
+
+#, python-format
+msgid "Could not render message: %s"
+msgstr "Weergeven van bericht kan niet: %s"
+
+#, python-format
+msgid "Message sent to %d users."
+msgstr "Bericht verstuurd naar %d gebruikers."
+
 #, python-format
 msgid "[%s] Message from %s: %s"
 msgstr "[%s] Bericht van %s: %s"
@@ -211,8 +239,14 @@ msgstr "Ongeldige invoer."
 msgid "No OpenID given!"
 msgstr "Er is geen OpenID opgegeven!"
 
+msgid "Connection not allowed, OpenID has been disabled on this installation"
+msgstr "Verbinding niet toegestaan, OpenID is uitgeschakeld op deze installatie"
+
 msgid "No OpenID was entered."
 msgstr "Er is geen OpenID ingevuld."
+
+msgid "Removal not allowed, OpenID has been disabled on this installation"
+msgstr "Verwijdering niet toegestaan, OpenID is uitgeschakeld op deze installatie"
 
 #, python-format
 msgid "No OpenID with ID '%s' exists."
@@ -223,7 +257,10 @@ msgid "You're not authorized to change %s's settings."
 msgstr "U bent niet geautoriseerd om %s's instellingen te veranderen."
 
 msgid "Successfully removed OpenID from account"
-msgstr ""
+msgstr "De OpenID is verwijderd van het account"
+
+msgid "OpenID login has been disabled on this installation"
+msgstr "OpenID inlog is uitgeschakeld op deze installatie"
 
 msgid "OpenID login failed."
 msgstr "OpenID inlog is mislukt."
@@ -236,7 +273,13 @@ msgid "OpenID %s already belongs to %s."
 msgstr "OpenID %s behoort al toe aan %s."
 
 msgid "Successfully added OpenID to user account."
-msgstr ""
+msgstr "De OpenID is toegevoegd aan de gebruikersaccount."
+
+#, python-format
+msgid ""
+"OpenID %s doesn't belong to an existing user account and user registration "
+"is disabled in this installation."
+msgstr "OpenID %s behoort niet tot een bestaand gebruikersaccount en gebruikersregistratie is uitgeschakeld op deze installatie."
 
 #, python-format
 msgid ""
@@ -244,14 +287,11 @@ msgid ""
 "belongs to a different user account. Please login with that account or use "
 "the forgot password functionality, and add the OpenID in your user profile "
 "settings afterwards. Sorry for the inconvenience."
-msgstr ""
+msgstr "Het e-mailadres %s dat werd teruggestuurd door de OpenID provider behoort al toe aan een ander gebruikersaccount. Log in met dat account of gebruik de 'wachtwoord vergeten' functionaliteit,  en voeg daarna de OpenID toe aan uw gebruikersprofielinstellingen. Excuses voor het ongemak."
 
 #, python-format
 msgid "Successfully created new user account %s"
-msgstr ""
-
-msgid "Justin Case has entered the room."
-msgstr "Justin Case komt de kamer binnen."
+msgstr "Het nieuwe gebruikersaccount %s is aangemaakt"
 
 msgid "tutorial_norms_overview_tab"
 msgstr "Overzicht van alle reglementen van deze groep. Onder de titel van elk reglement staat het huidige aantal voorstellen en reacties."
@@ -376,8 +416,21 @@ msgstr "De opname van %s is verwijderd."
 msgid "Page not Found"
 msgstr "Pagina niet Gevonden"
 
+msgid "Page does already exist. Select another key or language."
+msgstr "Pagina bestaat al. Selecteer een andere key of taal."
+
+msgid "Page updated"
+msgstr "Pagina bijgewerkt"
+
+msgid "Cannot find static page to edit"
+msgstr "Kan de te bewerken statische pagina niet vinden"
+
 msgid "The requested page was not found"
 msgstr "De opgevraagde pagina is niet gevonden"
+
+#, python-format
+msgid "Tag \"%s\" has been removed from %s \"%s\"."
+msgstr "Tag \"%s\" is verwijderd van %s \"%s\"."
 
 msgid ""
 "You have been logged out while authenticating at twitter. Please try again."
@@ -396,10 +449,13 @@ msgid "tutorial_user_index_intro"
 msgstr "Deelnemerslijst van de groep."
 
 msgid "Sorry, registration has been disabled by administrator."
-msgstr "Sorry, de beheerder staat registratie niet toe."
+msgstr "Sorry, registratie is uitgeschakeld door de beheerder."
 
 msgid "Sorry, but we don't accept registrations with this email address."
 msgstr "Het spijt ons, registratie met dit e-mail adres is niet toegestaan."
+
+msgid "Password has been set. Have fun!"
+msgstr "Het wachtwoord is ingesteld. Veel plezier!"
 
 msgid "There is no user registered with that email address."
 msgstr "Er bestaat geen gebruiker met dit e-mailadres"
@@ -432,11 +488,11 @@ msgid ""
 "The reset code is invalid. Please repeat the password recovery procedure."
 msgstr "De code is ongeldig. Herhaal de procedure om uw wachtwoord opnieuw in te stellen."
 
-msgid "Thank you, The address is already activated."
-msgstr "Dank u wel, het adres is al geactiveerd."
-
 msgid "The activation code is invalid. Please have it resent."
 msgstr "De activeringscode is ongeldig. Gelieve het opnieuw op te laten sturen."
+
+msgid "Thank you, The address is already activated."
+msgstr "Dank u wel, het adres is al geactiveerd."
 
 #, python-format
 msgid "Welcome to %s"
@@ -448,8 +504,17 @@ msgstr "Uw e-mail is bevestigd."
 msgid "The activation link has been re-sent to your email address."
 msgstr "De activatie link is opnieuw verzonden naar uw e-mailadres."
 
+msgid "Invalid login"
+msgstr "Ongeldige inlog"
+
+msgid "Invalid email / user name or password"
+msgstr "Ongeldig e-mail / gebruikersnaam of wachtwoord"
+
 msgid "Invalid user name or password"
 msgstr "Ongeldige gebruikersnaam of wachtwoord"
+
+msgid "Invalid email or password"
+msgstr "Ongeldig e-mail of wachtwoord"
 
 msgid "tutorial_dashboard_title"
 msgstr "U bevindt zich op uw persoonlijk Dashboard. Hier vindt u een overzicht van alle voorstellen en reglementen in uw groepen en uw volglijst."
@@ -482,6 +547,9 @@ msgstr "%s is geen lid van %s"
 msgid "%s is banned from the system."
 msgstr "%s is verbannen uit het systeem."
 
+msgid "You already have a password - use that to log in."
+msgstr "U heeft al een wachtwoord - gebruik het om in te loggen."
+
 msgid "A watchlist entry for this entity already exists."
 msgstr "Dit staat al in uw volglijst."
 
@@ -505,7 +573,7 @@ msgid "That email is already registered"
 msgstr "Dat e-mailadres is al geregistreerd"
 
 msgid "That email is already used by another account"
-msgstr ""
+msgstr "Het e-mailadres wordt al gebruikt door een ander account"
 
 msgid "Invalid date, expecting DD.MM.YYYY"
 msgstr "Ongeldige datum, gebruik DD.MM.JJJJ"
@@ -523,6 +591,12 @@ msgstr "De groep ID is ongelding"
 
 msgid "An instance with that key already exists"
 msgstr "Er bestaat al een groep met die ID"
+
+msgid "No static key is given"
+msgstr "Er is geen statische key geleverd"
+
+msgid "The static key is invalid"
+msgstr "De statische key is ongeldig"
 
 #, python-format
 msgid "No entity with ID '%s' exists"
@@ -550,6 +624,13 @@ msgstr "U mag de algemene badges niet aanpassen"
 msgid "No Badge ID '%s' exists"
 msgstr "Er bestaat geen badge met het ID '%s'"
 
+msgid "Duplicates in input set of user badge IDs"
+msgstr "Er zijn duplicaten in de ingevoerde set van gebruikersbadge IDs"
+
+#, python-format
+msgid "Could not find badges %s"
+msgstr "Kon badge %s niet vinden"
+
 #, python-format
 msgid "Cannot use global category %s in this instance"
 msgstr "De algemene categorie %s is niet te gebruiken in deze groep"
@@ -557,6 +638,12 @@ msgstr "De algemene categorie %s is niet te gebruiken in deze groep"
 #, python-format
 msgid "Badge with ID '%s' not valid in this instance"
 msgstr "De badge met ID '%s' is niet geldig in deze groep"
+
+msgid "Parent and child category instance have to match"
+msgstr "Parent en child categorie groep moeten overeenkomen"
+
+msgid "You shall not create cycles!"
+msgstr "Gij zult geen cycli creëren!"
 
 #, python-format
 msgid "No revision with ID '%s' exists"
@@ -648,11 +735,17 @@ msgid ""
 "insert enough information for the user: %s"
 msgstr "U moet de volgende plaatshouders in de e-mail tekst invoegen zodat we de deelnemer genoeg kunnen informeren: %s"
 
-msgid "Today"
-msgstr "Vandaag"
+msgid "This is not a valid image file"
+msgstr ""
 
-msgid "Yesterday"
-msgstr "Gisteren"
+msgid "The file is too big (>1MB)"
+msgstr ""
+
+msgid "Please select at least one instance"
+msgstr "Selecteer ten minste één groep"
+
+msgid "Disallowed instance selected"
+msgstr "Geselecteerde groep niet toegestaan"
 
 #, python-format
 msgid "%d days"
@@ -736,6 +829,15 @@ msgstr "deze e-mail is bedoeld om het door u verstrekte e-mailadres te controler
 msgid "Confirm your email address"
 msgstr "Bevestig uw e-mailadres"
 
+msgid "Dear Ms."
+msgstr "Beste mevrouw"
+
+msgid "Dear Mr."
+msgstr "Beste meneer"
+
+msgid "Dear"
+msgstr "Beste"
+
 msgid "activity"
 msgstr "activiteit"
 
@@ -765,6 +867,9 @@ msgstr "Groep"
 
 msgid "Categories"
 msgstr "Categorieën"
+
+msgid "Thumbnails"
+msgstr ""
 
 msgid "Created by"
 msgstr "Aangemaakt door"
@@ -831,10 +936,6 @@ msgstr "Steun"
 
 msgid "Newest Proposals"
 msgstr "Nieuwste Voorstellen"
-
-#, python-format
-msgid "Missing page: %s"
-msgstr "Ontbrekende pagina: %s"
 
 #, python-format
 msgid "Could not find the entity '%s'"
@@ -1130,6 +1231,9 @@ msgstr "Implementatie"
 msgid "Adhocracy"
 msgstr "Adhocracy"
 
+msgid "delete"
+msgstr "verwijder"
+
 #, python-format
 msgid "%s (deleted user)"
 msgstr "%s (verwijderde gebruiker)"
@@ -1219,14 +1323,32 @@ msgstr "Niet Meer Volgen"
 msgid "Send us your feedback"
 msgstr "Stuur ons feedback"
 
+msgid "Category"
+msgstr "Categorie"
+
+msgid "Title"
+msgstr "Titel"
+
 msgid "One line summary"
 msgstr "Eenregelige samenvatting"
+
+msgid "Description"
+msgstr "Beschrijving"
 
 msgid "Submit"
 msgstr "Verzend"
 
 msgid "List existing feedback"
 msgstr "Toon bestaande feedback"
+
+msgid "Proposal Category"
+msgstr "Voorstel Categorie"
+
+msgid "No Category"
+msgstr "Geen Categorie"
+
+msgid "Others"
+msgstr "Anderen"
 
 msgid "code of conduct"
 msgstr "gedragscode"
@@ -1327,17 +1449,30 @@ msgstr "items"
 msgid "Filter list"
 msgstr "Filter lijst"
 
-msgid "Remove all"
-msgstr "Verwijder alles"
-
-msgid "remove"
-msgstr "verwijder"
+msgid "reset"
+msgstr "reset"
 
 msgid "Sort:"
 msgstr "Sorteer:"
 
+#, python-format
+msgid "Welcome to %s!"
+msgstr "Welkom bij %s!"
+
+msgid "Please choose a password:"
+msgstr "Kies een wachtwoord:"
+
+msgid "Please pick a secure password"
+msgstr ""
+
+msgid "Set Password"
+msgstr "Stel Wachtwoord In"
+
 msgid "Get an account to participate in the discussion."
 msgstr "Maak een account aan om mee te doen aan de discussie."
+
+msgid "Log in to participate in the discussion."
+msgstr "Log in om deel te nemen aan de discussie."
 
 msgid "Register"
 msgstr "Aanmelden"
@@ -1352,29 +1487,32 @@ msgid "join"
 msgstr "word lid"
 
 msgid "Validate email to start contributing."
-msgstr ""
+msgstr "Bevestig uw e-mailadres om deel te nemen."
 
 #, python-format
 msgid "Resend validation email to %s"
-msgstr ""
+msgstr "Verstuur bevestigingsmail opnieuw naar %s"
 
 msgid "Send activation link"
-msgstr ""
+msgstr "Verstuur activatielink"
 
 msgid "Edit profile"
-msgstr ""
+msgstr "Bewerk profiel"
+
+msgid "This instance has been frozen - you can not edit or post anything."
+msgstr "Deze groep is bevroren - u kunt geen aanpassingen maken of nieuwe inhoud plaatsen."
 
 msgid ""
 "You need to set an email in your profile in order to contribute to this "
 "instance."
-msgstr ""
+msgstr "U moet een e-mailadres instellen in uw profiel om deel te kunnen nemen aan deze groep."
 
 msgid ""
 "Please validate your email address in order to contribute to this instance."
-msgstr ""
+msgstr "Bevestig uw e-mailadres om deel te kunnen nemen aan deze groep."
 
 msgid "Your registered email address is:"
-msgstr ""
+msgstr "Uw geregistreerde e-mailadres is:"
 
 msgid "Next"
 msgstr "Volgende"
@@ -1400,8 +1538,14 @@ msgstr "Totaal <a href=\"%(url)s\">%(votes)s Stemmen</a>, waarvan %(for)s voor e
 msgid "Votes"
 msgstr "Stemmen"
 
+msgid "Votes by User Group"
+msgstr "Stemmen per Gebruikersgroep"
+
 msgid "Shortlink"
 msgstr "Link"
+
+msgid "Edit this page"
+msgstr ""
 
 msgid "Report abuse"
 msgstr "Meld misbruik"
@@ -1459,6 +1603,9 @@ msgstr "Importeer"
 
 msgid "Import users"
 msgstr "Importeer gebruikers"
+
+msgid "Generate welcome codes"
+msgstr "Genereer welkom codes"
 
 msgid "Import badges"
 msgstr "Importeer badges"
@@ -1518,6 +1665,12 @@ msgstr "Importeer Gebruikers"
 
 msgid "Update Search Index"
 msgstr "Update Zoek Index"
+
+msgid "Static Pages"
+msgstr "Statische Pagina's"
+
+msgid "Send an email to users"
+msgstr "Stuur een e-mail naar gebruikers"
 
 msgid "Site administration"
 msgstr "Site administratie"
@@ -1589,27 +1742,6 @@ msgstr "De volgende gebruikers konden niet worden aangemaakt:"
 msgid "These users where created, but we could not send out mails:"
 msgstr "De gebruikers zijn aangemaakt, maar we konden geen e-mail verzenden:"
 
-msgid "Add instance badge"
-msgstr "Voeg groepsbadge toe"
-
-msgid "Add user badge"
-msgstr "Voeg gebruiker badge toe"
-
-msgid "Add delegateable badge"
-msgstr "Voeg volmachtiging badge toe"
-
-msgid "Add category badge"
-msgstr "Voeg categorie badge toe"
-
-msgid "Edit user badge"
-msgstr "Bewerk gebruiker badge"
-
-msgid "Edit delegateable badge"
-msgstr "Bewerk volmachtiging badge"
-
-msgid "Edit category badge"
-msgstr "Bewerk categorie badge"
-
 msgid "Badge title"
 msgstr "Badge titel"
 
@@ -1624,6 +1756,12 @@ msgstr "Zoals '#a4a4a4'"
 
 msgid "Preview:"
 msgstr "Voorbeeld:"
+
+msgid "Delete current thumbnail image"
+msgstr ""
+
+msgid "Upload thumbnail icon. This is used instead of color to show the badge"
+msgstr ""
 
 msgid "Check to hide badge in user interface"
 msgstr "Verberg badge in gebruikersinterface"
@@ -1654,8 +1792,22 @@ msgstr "Geef deze badge weer in plaats van de normale gebruikersgroep."
 msgid "Global"
 msgstr "Algemeen"
 
-msgid "Other instances"
-msgstr "Andere groepen"
+msgid "Parent Badge"
+msgstr "Parent Badge"
+
+msgid "No Parent Badge"
+msgstr "Geen Parent Badge"
+
+msgid "Global categories"
+msgstr "Algemene categorieën"
+
+msgid "Local instance categories"
+msgstr "Lokale groepscategorieën"
+
+msgid ""
+"Description to select children of this badge (irrelevant if this badge "
+"doesn't have any children)"
+msgstr "Beschrijving voor het selecteren van children van deze badge (ongeacht of deze badge children heeft)"
 
 msgid "Save Badge"
 msgstr "Sla Badge op"
@@ -1665,12 +1817,6 @@ msgstr "Bewerk"
 
 msgid "No badges added yet."
 msgstr "Nog geen badges toegevoegd."
-
-msgid "Title"
-msgstr "Titel"
-
-msgid "Description"
-msgstr "Beschrijving"
 
 msgid "Color"
 msgstr "Kleur"
@@ -1693,6 +1839,9 @@ msgstr "ja"
 msgid "no"
 msgstr "nee"
 
+msgid "Parent"
+msgstr "Parent"
+
 msgid "User Badges"
 msgstr "Gebruikers badges"
 
@@ -1704,6 +1853,9 @@ msgstr "Voorstel Badges"
 
 msgid "Proposal Category Badges"
 msgstr "Voorstel Categorie Badges"
+
+msgid "Proposal Thumbnail Badges"
+msgstr ""
 
 msgid "Instance Badges"
 msgstr "Groepsbadge"
@@ -1768,7 +1920,7 @@ msgid "Login to comment."
 msgstr "Log in om te reageren."
 
 msgid "Validate email in order to comment."
-msgstr ""
+msgstr "Bevestig uw e-mailadres om te reageren."
 
 msgid "is pro"
 msgstr "is voor"
@@ -1784,9 +1936,6 @@ msgstr "Deze reactie is verwijderd."
 
 msgid "edit"
 msgstr "bewerk"
-
-msgid "delete"
-msgstr "verwijder"
 
 msgid "1 Comment"
 msgstr "1 Reactie"
@@ -1805,7 +1954,7 @@ msgid "Login to reply"
 msgstr "Log in om te reageren"
 
 msgid "Validate email in order to reply"
-msgstr ""
+msgstr "Bevestig uw e-mailadres om te antwoorden."
 
 msgid "report"
 msgstr "meld misbruik"
@@ -1832,6 +1981,9 @@ msgstr "Neutraal"
 
 msgid "Con"
 msgstr "Tegen"
+
+msgid "Enter comment text:"
+msgstr ""
 
 msgid "Allow others to edit this comment."
 msgstr "Sta toe dat anderen deze reactie mogen aanpassen."
@@ -2079,6 +2231,12 @@ msgstr "U kunt CSS toevoegen om de opmaak van deze groep aan te passen."
 msgid "Extra CSS"
 msgstr "Extra CSS"
 
+msgid "Thumbnail badges width"
+msgstr ""
+
+msgid "Thumbnail badges height"
+msgstr ""
+
 msgid "Use Norms"
 msgstr "Gebruik Reglementen"
 
@@ -2090,6 +2248,9 @@ msgstr "Elk voorstel moet minstens één veranderingen in het reglement aanbreng
 
 msgid "Use milestones"
 msgstr "Gebruik mijlpalen"
+
+msgid "Use thumbnail badges"
+msgstr ""
 
 msgid "Hide global categories"
 msgstr "Verberg algemene categorieën"
@@ -2120,16 +2281,16 @@ msgid "Select whether this instance will be shown in public listings."
 msgstr "Kies of"
 
 msgid "Require email validation"
-msgstr ""
+msgstr "Vereis e-mailadres bevestiging"
 
 msgid "Require instance members to validate their email address."
-msgstr ""
+msgstr "Vereis groepsleden om hun e-mailadressen te bevestigen."
 
 msgid "This instance is authenticated"
 msgstr "Deze groep is geverifieerd"
 
 msgid "Enable (final) adoption voting"
-msgstr "Sta stemmingen voor (definitieve) goedkeuring toe"
+msgstr "Schakel stemmingen voor (definitieve) goedkeuring in"
 
 msgid ""
 "Before activating, the defined majority must be continuously held by the "
@@ -2143,7 +2304,13 @@ msgid "Delay"
 msgstr "Periode dat een meerderheid behouden moet worden voor aanname"
 
 msgid "Enable vote delegation"
-msgstr "Sta het geven van volmachten van stemmen toe"
+msgstr "Schakel het geven van volmachten van stemmen in"
+
+msgid "Break down Voting Result by Badge"
+msgstr "Toon het Stem Resultaat per badge"
+
+msgid "Display how the users with the selected badges feel about the issue."
+msgstr "Toon wat gebruikers met de geselecteerde badge van dit onderwerp vinden."
 
 msgid "Home"
 msgstr "Home"
@@ -2161,7 +2328,7 @@ msgid "Login to create a new proposal."
 msgstr "Log in om een nieuwe voorstel te maken"
 
 msgid "Validate email in order to create a new proposal."
-msgstr ""
+msgstr "Bevestig uw e-mailadres om een nieuw voorstel aan te maken."
 
 msgid "show a list of proposals"
 msgstr "toon een lijst van voorstellen zien"
@@ -2219,12 +2386,48 @@ msgid_plural "%s norms"
 msgstr[0] "%s reglement"
 msgstr[1] "%s reglementen"
 
-#, python-format
-msgid "Message %s"
-msgstr "Bericht %s"
+msgid "Send mass message"
+msgstr "Verstuur massa bericht"
+
+msgid ""
+"Please note that only users with verified email addresses and activated "
+"newsservice will receive this message per email."
+msgstr "Houd er rekening mee dat enkel gebruikers met een geverifieerd e-mailadres en geactiveerde nieuwsservice dit bericht per e-mail zullen ontvangen."
+
+msgid "Filter users ..."
+msgstr "Filter gebruikers ..."
+
+msgid "... by instance:"
+msgstr "... op groep:"
+
+msgid "... by badge:"
+msgstr "... op badge:"
 
 msgid "Subject"
 msgstr "Onderwerp"
+
+msgid "Body"
+msgstr "Inhoud"
+
+msgid "Use {email}, {name}, {salutation} to address the user directly."
+msgstr "Gebruik {e-mail}, {naam}, {aanhef} om de gebruiker direct te adresseren."
+
+msgid "Sender identity"
+msgstr "Afzender identiteit"
+
+msgid "Mass Message Preview"
+msgstr "Massa Bericht Voorbeeld"
+
+#, python-format
+msgid "You're about to send the following message to %s recipients:"
+msgstr "U staat op het punt om het volgende bericht te versturen naar %s ontvangers:"
+
+msgid "The message will go to the following users:"
+msgstr "Dit bericht gaat naar de volgende gebruikers:"
+
+#, python-format
+msgid "Message %s"
+msgstr "Bericht %s"
 
 msgid ""
 "Your e-mail address will be included in this message to give the recipient a"
@@ -2263,12 +2466,6 @@ msgstr "Datum van de mijlpaal"
 
 msgid "Please use the DD.MM.YYYY format."
 msgstr "Gebruik alstublieft het DD.MM.JJJJ formaat."
-
-msgid "Category"
-msgstr "Categorie"
-
-msgid "No Category"
-msgstr "Geen Categorie"
 
 msgid "Create a new milestone."
 msgstr "Maak een nieuwe mijlpaal."
@@ -2341,6 +2538,9 @@ msgstr "Alternatief"
 msgid "Login with your OpenID to skip registration."
 msgstr "Log in met uw OpenID om registratie over te slaan."
 
+msgid "Login with your OpenID."
+msgstr "Log in met uw OpenID."
+
 msgid "Sign in"
 msgstr "Aanmelden"
 
@@ -2358,7 +2558,7 @@ msgid ""
 "A unique user name is required for you complete sign up and login. The user "
 "name \"%s\" received from your OpenID provider is invalid or already used. "
 "Please provide a different, unique user name."
-msgstr ""
+msgstr "Een unieke gebruikersnaam is vereist. De gebruikersnaam \"%s\" ontvangen van uw OpenID provider is ongeldig of al in gebruik. Probeer een andere gebruikersnaam."
 
 msgid "Username:"
 msgstr "Gebruikersnaam: "
@@ -2406,6 +2606,12 @@ msgstr "Variant Naam"
 
 msgid "Text"
 msgstr "Tekst"
+
+msgid "Formatting"
+msgstr "Tekstopmaak"
+
+msgid "Use markdown formatting."
+msgstr "Gebruik markdown opmaak."
 
 msgid "Parent page:"
 msgstr "Bovenliggende pagina:"
@@ -2618,6 +2824,12 @@ msgstr "U staat op het punt om op te roepen tot een stemming. Wanneer u dit doet
 msgid "Are you sure you want to delete this proposal?"
 msgstr "Weet u zeker dat u dit voorstel wilt verwijderen?"
 
+msgid "thumbnail badge"
+msgstr ""
+
+msgid "No Thumbnail Badge"
+msgstr ""
+
 #, python-format
 msgid "Delegations: %s"
 msgstr "Volmachtigingen: %s"
@@ -2635,7 +2847,7 @@ msgid "Login to propose a new variant."
 msgstr "Log in om een nieuwe variant voor te stellen"
 
 msgid "Validate email in order to propose a new variant."
-msgstr ""
+msgstr "Bevestig uw e-mailadres om een nieuwe variant voor te stellen."
 
 msgid "Get Involved"
 msgstr "Raak Betrokken"
@@ -2670,9 +2882,6 @@ msgstr "Het voorstel zal..."
 
 msgid "Proposal goals"
 msgstr "Voorstel doelstellingen"
-
-msgid "Proposal Category"
-msgstr "Voorstel Categorie"
 
 msgid "Collaboration and Notification"
 msgstr "Samenwerking en Meldingen"
@@ -2750,7 +2959,7 @@ msgid "Join instance to propose to change a norm"
 msgstr "Word lid van deze groep om een aanpassing aan een reglement voor te stellen"
 
 msgid "Validate email in order to propose to change a norm"
-msgstr ""
+msgstr "Bevestig uw e-mailadres om voor te stellen om een reglement te veranderen"
 
 msgid "tutorial_proposal_show_vote"
 msgstr "U kunt voor of tegen het voorstel stemmen, of, als de groep dit toestaat, een volmachtiging geven zodat iemand anders voor u kan stemmen."
@@ -2941,6 +3150,40 @@ msgstr "bekijk"
 msgid "compare"
 msgstr "vergelijken"
 
+#, python-format
+msgid "Edit %(key)s (%(langname)s)"
+msgstr "Bewerk %(key)s (%(langname)s)"
+
+msgid "Title:"
+msgstr "Titel:"
+
+msgid "Content of the page"
+msgstr "Inhoud van deze pagina"
+
+msgid "Change static page"
+msgstr "Wijzig statische pagina"
+
+msgid "Back to the list"
+msgstr "Terug naar de lijst"
+
+msgid "Key"
+msgstr "Key"
+
+msgid "Create new page"
+msgstr "Maak nieuwe pagina"
+
+msgid "New Static Page"
+msgstr "Nieuwe Statische Pagina"
+
+msgid "New static page"
+msgstr "Nieuwe statische pagina"
+
+msgid "Key:"
+msgstr "Key:"
+
+msgid "Add static page"
+msgstr "Voeg statische pagina toe"
+
 msgid ""
 "Tags are keywords used to find, sort and filter proposals and documents."
 msgstr "Tags zijn trefwoorden die gebruikt kunnen worden om voorstellen en documenten te vinden, sorteren en te filteren."
@@ -2989,9 +3232,6 @@ msgstr "Er is nog geen beslissing over dit reglement en het is dus geen officiee
 msgid "discuss (%s comments) &raquo;"
 msgstr "discussieer (%s reacties) &raquo;"
 
-msgid "Title:"
-msgstr "Titel:"
-
 msgid "Variant:"
 msgstr "Variant:"
 
@@ -3034,7 +3274,7 @@ msgstr "Startpagina"
 
 #, python-format
 msgid "Hi %s."
-msgstr ""
+msgstr "Hallo %s."
 
 #, python-format
 msgid ""
@@ -3148,11 +3388,8 @@ msgstr "Wachtwoord (bevestiging):"
 msgid "Gender"
 msgstr "Geslacht"
 
-msgid "Select your gender"
-msgstr "Selecteer uw geslacht"
-
-msgid "Unspecified"
-msgstr "Ongespecificeerd"
+msgid "I am..."
+msgstr "Ik ben..."
 
 msgid "Male"
 msgstr "Man"
@@ -3184,6 +3421,12 @@ msgstr "Niet bevestigd."
 msgid "Re-send activation link"
 msgstr "Verstuur de activatie-link opnieuw"
 
+msgid "Receive occasional news from instance administrators."
+msgstr "Ontvang af en toe nieuws van groepsbeheerders."
+
+msgid "Receive news service"
+msgstr "Ontvang nieuws dienst"
+
 msgid "OpenID"
 msgstr "OpenID"
 
@@ -3192,6 +3435,9 @@ msgstr "Met OpenID kunt u inloggen op vele websites."
 
 msgid "There are no associated OpenIDs."
 msgstr "Er zijn geen gekoppelde OpenIDs."
+
+msgid "remove"
+msgstr "verwijder"
 
 msgid "Short biography"
 msgstr "Korte biografie"
@@ -3242,13 +3488,14 @@ msgstr "%s is een lid in de volgende Adhocracies"
 msgid "Who are you, then?"
 msgstr "Wie bent u?"
 
-msgid ""
-"If you have an account but you've lost your password, <a href='/reset'>click"
-" here</a>."
-msgstr "Als u een account heeft, maar u bent uw wachtwoord vergeten, <a href='/reset'>klik dan hier</a>."
+msgid "Email or username:"
+msgstr "E-mail of gebruikersnaam:"
 
 msgid "Login:"
 msgstr "Log in:"
+
+msgid "Email:"
+msgstr "E-mail:"
 
 msgid "Register new account"
 msgstr "Maak een nieuw account aan"
@@ -3257,6 +3504,11 @@ msgid ""
 "Creating an account is easy; all you need is a user name, password and email"
 " address."
 msgstr "Een account aanmaken is eenvoudig, alles wat u nodig heeft is een gebruikersnaam, wachtwoord en e-mailadres."
+
+msgid ""
+"If you have an account but you've lost your password, <a href='/reset'>click"
+" here</a>."
+msgstr "Als u een account heeft, maar u bent uw wachtwoord vergeten, <a href='/reset'>klik dan hier</a>."
 
 msgid "Can only contain letters and numbers."
 msgstr "Mag enkel letters en cijfers bevatten."

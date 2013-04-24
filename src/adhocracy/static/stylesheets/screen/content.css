@@ -10,8 +10,8 @@ audio[controls],canvas,video {display: inline-block; *display: inline; zoom: 1}
 
 /* fonts */
 h1, h2, h3, h4, h5, h6, legend {
-  font-family: 'ColaborateRegular', Arial, sans-serif; 
-  line-height: 1.2; 
+  font-family: 'ColaborateRegular', Arial, sans-serif;
+  line-height: 1.2;
   text-transform: none
 }
 h1 { font-size: 34px; margin: 27px 23px; font-weight: normal; }
@@ -177,7 +177,6 @@ a.button.highlight:hover {
 }
 
 .register {
-  height: 27px;
   line-height: 27px;
   font-size:13px;
 }
@@ -267,7 +266,7 @@ a.button_small.off:active, a.button_small.off.active {
   display: inline-block;
 }
 .nobullet {
-  list-style: none; 
+  list-style: none;
   margin-left: 0
 }
 .content_list {
@@ -282,7 +281,7 @@ a.button_small.off:active, a.button_small.off.active {
 #col3 .content_list h3 {
     font-size: 16px;
 }
- 
+
 .content_list .level-1 {
   padding-left: 1.5em;
 }
@@ -325,9 +324,9 @@ li.content_box .base {
   margin-bottom: 0px;
 }
 
-.pro, .contra { font-size: 14px; }
+.pro, .con { font-size: 14px; }
 .pro, ins { color: darkgreen; }
-.contra, del, .countdown.highlight { color: darkred; }
+.con, del, .countdown.highlight { color: darkred; }
 
 .close { display: none; }
 .open { display: block; }
@@ -378,7 +377,7 @@ margin: 0;
 }
 
 .pager_wrapper .sort_group {
-  float: left; 
+  float: left;
   padding: 0 2em 0 1em;
 }
 
@@ -580,7 +579,13 @@ body.logged_in #nav li a {
 }
 
 #flash_message p.register_msg {
-  line-height: 27px;g
+  line-height: 27px;
+}
+#flash_message .attention-frozen {
+  text-align: center;
+  font-size: 140%;
+  background: #fffbd0;
+  padding: 5px 0;
 }
 
 /* info box and overlay */
@@ -868,10 +873,13 @@ a.follow_paper, div.skip_follow {
   border-radius: 13px;
   overflow: hidden;
   display: inline-block;
-  margin: 0 0 20px;
   font-weight: bold;
   font-size: 14px;
   padding: 0 20px 0 40px;
+}
+
+.sidebar_box a.follow_paper {
+  margin-top: 20px;
 }
 
 a.follow_paper {
@@ -1063,8 +1071,8 @@ background-image: none !important;
 }
 
 .vote_wrapper .or {
-  display: inline-block; 
-  vertical-align: top; 
+  display: inline-block;
+  vertical-align: top;
   padding-top: 6px
 }
 
@@ -1280,7 +1288,7 @@ form p.info { margin-bottom: 10px; color: #666; }
 
 textarea {
   width: 100%;
-  min-height: 128px; 
+  min-height: 128px;
 }
 
 input[type=checkbox], input[type=radio] { vertical-align: text-top; }
@@ -1492,7 +1500,7 @@ margin-bottom: 0;
 
 /* Permissions table */
 
-#permissions th.group { vertical-align: bottom; 
+#permissions th.group { vertical-align: bottom;
     padding-bottom: 15px;
     vertical-align: bottom;
 }
@@ -1571,6 +1579,11 @@ body.logged_in .only-anon {
   margin-left: 1em;
   border-left: 1px dotted #ccc;
   height: 28px;
+}
+.thumbnailbadges {
+  float: left;
+  margin-top: 8px;
+  margin-right: 5px
 }
 
 .sp-replacer {
@@ -1775,6 +1788,98 @@ iframe {
   border: none;
 }
 
+form#user_welcome {
+  margin: 0;
+  padding: 0;
+}
+form#user_welcome>label {
+  margin: 0;
+  padding: 5px 0;
+  text-align: center;
+  font-size: 22px;
+  line-height: normal;
+}
+form#user_welcome>label>* {
+  vertical-align: top;
+  font-size: inherit;
+  height: auto;
+  line-height: normal;
+}
+form#user_welcome>label>span {
+  display: inline-block;
+  padding-top: 3px;
+}
+form#user_welcome>label>input[type="password"] {
+  padding: 2px 5px;
+  margin: 0;
+  width: 5em;
+}
+form#user_welcome>label>input[type="submit"] {
+  padding: 2px 5px;
+}
+
 dl.votedetail {margin: 0; padding: 0;}
 dl.votedetail>dt {float: left; min-width: 5em; padding-right: 0.5em;}
 dl.votedetail>dd {margin: 0; padding: 0;}
+
+.languagelist label {margin: 0; padding: 0;}
+
+.massmessage_filter>div {float: left;}
+.massmessage_filter>div:not(:first-of-type) {
+  padding-left: 1em;
+  margin-left: 1em;
+  border-left: 1px solid #ddd;
+}
+.massmessage_preview {background: inherit;}
+.massmessage_preview dl {margin: 0;}
+.massmessage_preview dt {float: left; min-width: 5em;}
+.massmessage_preview dt, .massmessage_preview dd {margin: 0;}
+/* Override bootstrap mis-definitions */
+.massmessage_preview dt, .massmessage_preview dd {line-height: inherit;}
+
+.message_preview_body {background: #ccc; white-space: pre-wrap; margin-bottom: 0.5em;}
+
+.importexport_settings {margin-left: 30px;}
+
+form[name="login"] input[type="text"],
+form[name="login"] input[type="email"],
+form[name="login"] input[type="password"] {
+  display: block;
+  width: 206px;
+}
+form[name="login"] input[type="password"] {
+  margin-bottom: 0;
+}
+.password-reset-link {
+  display: inline-block;
+  width: 206px;
+  padding-left: 12px;
+  text-align: right;
+  padding-right: 0;
+}
+
+.staticpage_edit {float: right;}
+
+form.password-reset input[type="submit"] {
+  padding: 5px 10px;
+}
+
+form.inline-form {
+  background: inherit;
+  padding: 0;
+  display: inline-block;
+}
+
+form[name="login"].login-alternate input[type="email"],
+form[name="login"].login-alternate input[type="text"],
+form[name="login"].login-alternate input[type="password"] {
+  display: inline;
+}
+form[name="login"].login-alternate label {
+  margin-left: 20px;
+  margin-top: 10px;
+}
+form[name="login"].login-alternate label>span {
+  vertical-align: text-top;
+}
+

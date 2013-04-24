@@ -270,8 +270,6 @@ if [ '!' -e adhocracy_buildout/.git ]; then
 fi
 
 cd adhocracy_buildout
-# Work around a bug in bootstrap.py where it forgets to create eggs/, but tries to write to eggs/tmpaIRxDN
-mkdir -p eggs
 BUILDOUT_VERSION=1.7.0
 cur_installed="$(find eggs -maxdepth 1 -name "zc.buildout-${BUILDOUT_VERSION}-*" -print -quit 2>/dev/null)"
 if $always_rebuild || test -z "$cur_installed"; then
@@ -283,6 +281,9 @@ bin/buildout -c "buildout_current.cfg"
 echo '#!/bin/sh
 set -e
 cd "$(dirname $(dirname $(readlink -f $0)))"
+
+# Remove caches (workaround: cache fails when switching adhocracy.client_location)
+rm -rf var/data/templates
 
 cp etc/adhocracy.ini etc/adhocracy-interactive.ini
 

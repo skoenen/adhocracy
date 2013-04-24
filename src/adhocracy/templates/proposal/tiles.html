@@ -3,13 +3,20 @@
 
 <%def name="row(tile, proposal)">
     <li class="content_box ${'fresh' if tile.fresh else ''}">
+        <div id="thumbnailbadges_${proposal.id}" class="thumbnailbadges"
+              data-id="${proposal.id}">
+            ${tiles.badge.badges(proposal.thumbnails)}
+        </div>      
         <h3><a class="link" href="${h.entity_url(proposal)}">${proposal.title}</a>
             %if tile.fresh:
                 ${_("(new)")}
             %endif
             <span id="badges_${proposal.id}" class="badges"
                   data-id="${proposal.id}">
-                ${tiles.badge.badges(proposal.badges + proposal.categories)}
+                ${tiles.badge.badges(proposal.badges)}
+            </span>
+            <span  class="badges">
+                ${tiles.badge.badges(proposal.categories)}
             </span>
         </h3>
         <div class="meta">              
@@ -39,8 +46,10 @@
 
     <h3>${_("Information")}</h3>
     <div>
-        ${_("The proposal was created by %s on %s") % (h.user.link(proposal.creator), h.format_date(proposal.create_time))|n} 
+        ${_("The proposal was created by %s on %s") % (h.user.link(proposal.creator), h.date_tag(proposal.create_time))|n} 
+      %if h.asbool(config.get('adhocracy.show_abuse_button', 'True')):
     · <a href="${h.abuse.for_entity(proposal)}">${_("report")}</a>
+      %endif
   </div>
   %if proposal.milestone and c.instance.milestones:
   <br/>
@@ -112,7 +121,7 @@
         <div class="panel">
             <div class="info adoption adopted">
                 ${_("%s has been adopted %s.") % (h.delegateable.link(proposal, link=False),
-                                                  h.relative_time(proposal.adopt_poll.end_time))|n}
+                                                  h.datetime_tag(proposal.adopt_poll.end_time))|n}
             </div>
         </div>
         %elif proposal.is_adopt_polling():

@@ -13,6 +13,7 @@ from paste.deploy.converters import asbool, asint
 from pylons import tmpl_context as c, config, request
 from pylons.i18n import _
 from webhelpers.html import literal
+from webhelpers.html.tags import file
 from webhelpers.pylonslib import Flash as _Flash
 from webhelpers.text import truncate
 
@@ -39,6 +40,7 @@ from adhocracy.lib.helpers import abuse_helper as abuse, tutorial
 from adhocracy.lib.helpers import milestone_helper as milestone
 from adhocracy.lib.helpers import recaptcha_helper as recaptcha
 from adhocracy.lib.helpers import staticpage_helper as staticpage
+from adhocracy.lib.helpers import badge_helper as badge
 from adhocracy.lib.helpers.fanstatic_helper import (FanstaticNeedHelper,
                                                     get_socialshareprivacy_url)
 from adhocracy.lib.helpers import feedback_helper as feedback
@@ -47,7 +49,8 @@ from adhocracy.lib.helpers.site_helper import base_url
 from adhocracy.lib.watchlist import make_watch, find_watch
 from adhocracy import model, static
 from adhocracy.i18n import countdown_time, format_date
-from adhocracy.i18n import relative_date, relative_time
+from adhocracy.i18n import date_tag
+from adhocracy.i18n import datetime_tag
 
 
 flash = _Flash()

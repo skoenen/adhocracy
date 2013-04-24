@@ -1,4 +1,5 @@
 import logging
+import re
 
 import formencode
 from formencode import ForEach, htmlfill, validators
@@ -19,7 +20,9 @@ from adhocracy.lib import democracy, event, helpers as h, pager
 from adhocracy.lib import sorting, search as libsearch, tiles, text
 from adhocracy.lib.auth import require, login_user, guard
 from adhocracy.lib.auth.authorization import has
-from adhocracy.lib.auth.csrf import RequireInternalRequest
+from adhocracy.lib.auth.csrf import RequireInternalRequest, token_id
+from adhocracy.lib.auth.welcome import (welcome_enabled, can_welcome,
+                                        welcome_url)
 from adhocracy.lib.base import BaseController
 from adhocracy.lib.instance import RequireInstance
 import adhocracy.lib.mail as libmail
@@ -102,6 +105,16 @@ class UserBadgesForm(formencode.Schema):
     badge = ForEach(forms.ValidUserBadge())
 
 
+class UserSetPasswordForm(formencode.Schema):
+    allow_extra_fields = True
+    password = validators.String(not_empty=False)
+
+
+class NoPasswordForm(formencode.Schema):
+    allow_extra_fields = True
+    login = validators.String(not_empty=False)
+
+
 class UserController(BaseController):
 
     def __init__(self):
@@ -129,7 +142,11 @@ class UserController(BaseController):
         c.users_pager = solr_global_users_pager()
         return render("/user/all.html")
 
-    def new(self):
+    def new(self, defaults=None):
+        if not h.allow_user_registration():
+            return ret_abort(
+                _("Sorry, registration has been disabled by administrator."),
+                category='error', code=403)
         c.active_global_nav = "login"
         if c.user:
             redirect('/')
@@ -140,7 +157,11 @@ class UserController(BaseController):
             session['came_from'] = request.params.get('came_from',
                                                       h.base_url())
             session.save()
-            return render("/user/register.html")
+            if defaults is None:
+                defaults = {}
+            defaults['_tok'] = token_id()
+            return htmlfill.render(render("/user/register.html"),
+                                   defaults=defaults)
 
     @RequireInternalRequest(methods=['POST'])
     @validate(schema=UserCreateForm(), form="new", post_only=True)
@@ -194,10 +215,19 @@ class UserController(BaseController):
         # api. This is done here and not with an redirect to the login
         # to omit the generic welcome message
         who_api = get_api(request.environ)
-        login = self.form_result.get("user_name").encode('utf-8')
+        login_configuration = h.allowed_login_types()
+        if 'username+password' in login_configuration:
+            login = self.form_result.get("user_name")
+        elif 'email+password' in login_configuration:
+            login = self.form_result.get("email")
+        else:
+            raise Exception('We have no way of authenticating the newly'
+                            'created user %s; check adhocracy.login_type' %
+                            credentials['login'])
         credentials = {
             'login': login,
-            'password': self.form_result.get("password").encode('utf-8')}
+            'password': self.form_result.get("password")
+        }
         authenticated, headers = who_api.login(credentials)
         if authenticated:
             # redirect to dashboard with login message
@@ -209,7 +239,8 @@ class UserController(BaseController):
                 session.save()
                 location = came_from
             else:
-                location = h.base_url('/user/%s/dashboard' % login)
+                location = h.base_url('/user/%s/dashboard' %
+                                      self.form_result.get("user_name"))
             raise HTTPFound(location=location, headers=headers)
         else:
             raise Exception('We have added the user to the Database '
@@ -278,29 +309,65 @@ class UserController(BaseController):
             event.emit(event.T_USER_ADMIN_EDIT, c.page_user, admin=c.user)
         redirect(h.entity_url(c.page_user))
 
+    @RequireInternalRequest(methods=['POST'])
+    @validate(schema=UserSetPasswordForm(), form='edit', post_only=True)
+    def set_password(self, id):
+        c.page_user = get_entity_or_abort(model.User, id,
+                                          instance_filter=False)
+        require.user.edit(c.page_user)
+        c.page_user.password = self.form_result.get('password')
+        model.meta.Session.add(c.page_user)
+        model.meta.Session.commit()
+
+        h.flash(_('Password has been set. Have fun!'), 'success')
+        redirect(h.base_url('/'))
+
     def reset_form(self):
         return render("/user/reset_form.html")
 
-    @validate(schema=UserResetApplyForm(), form="reset", post_only=True)
+    @RequireInternalRequest(methods=['POST'])
+    @validate(schema=UserResetApplyForm(), form="reset_form", post_only=True)
     def reset_request(self):
-        c.page_user = model.User.find_by_email(self.form_result.get('email'))
-        if c.page_user is None:
+        user = model.User.find_by_email(self.form_result.get('email'))
+        if user is None:
             msg = _("There is no user registered with that email address.")
             return htmlfill.render(self.reset_form(), errors=dict(email=msg))
-        c.page_user.reset_code = random_token()
-        model.meta.Session.add(c.page_user)
-        model.meta.Session.commit()
-        url = h.base_url("/user/%s/reset?c=%s" % (c.page_user.user_name,
-                                                  c.page_user.reset_code),
-                         absolute=True)
-        body = (
-            _("you have requested that your password be reset. In order "
-              "to confirm the validity of your claim, please open the "
-              "link below in your browser:") +
-            "\r\n\r\n  " + url + "\n\n" +
-            _("Your user name to login is: %s") % c.page_user.user_name)
+        return self._handle_reset(user)
 
-        libmail.to_user(c.page_user, _("Reset your password"), body)
+    def _handle_reset(self, user):
+        c.page_user = user
+
+        if welcome_enabled():
+            welcome_code = (c.page_user.welcome_code
+                            if c.page_user.welcome_code
+                            else random_token())
+            c.page_user.reset_code = u'welcome!' + welcome_code
+            model.meta.Session.add(c.page_user)
+            model.meta.Session.commit()
+            url = welcome_url(c.page_user, welcome_code)
+            body = (
+                _("you have requested that your password be reset. In order "
+                  "to confirm the validity of your claim, please open the "
+                  "link below in your browser:") +
+                "\n\n  " + url + "\n")
+            libmail.to_user(c.page_user,
+                            _("Login for %s") % h.site.name(),
+                            body)
+        else:
+            c.page_user.reset_code = random_token()
+            model.meta.Session.add(c.page_user)
+            model.meta.Session.commit()
+            url = h.base_url("/user/%s/reset?c=%s" % (c.page_user.user_name,
+                                                      c.page_user.reset_code),
+                             absolute=True)
+            body = (
+                _("you have requested that your password be reset. In order "
+                  "to confirm the validity of your claim, please open the "
+                  "link below in your browser:") +
+                "\r\n\r\n  " + url + "\n" +
+                _("Your user name to login is: %s") % c.page_user.user_name)
+
+            libmail.to_user(c.page_user, _("Reset your password"), body)
         return render("/user/reset_pending.html")
 
     @validate(schema=UserCodeForm(), form="reset_form", post_only=False,
@@ -336,12 +403,12 @@ class UserController(BaseController):
                                           instance_filter=False)
         code = self.form_result.get('c')
 
-        if c.page_user.activation_code is None:
-            h.flash(_(u'Thank you, The address is already activated.'))
-            redirect(h.entity_url(c.page_user))
-        elif c.page_user.activation_code != code:
+        if c.page_user.activation_code != code:
             h.flash(_("The activation code is invalid. Please have it "
                       "resent."), 'error')
+            redirect(h.entity_url(c.page_user))
+        if c.page_user.activation_code is None:
+            h.flash(_(u'Thank you, The address is already activated.'))
             redirect(h.entity_url(c.page_user))
 
         c.page_user.activation_code = None
@@ -452,6 +519,55 @@ class UserController(BaseController):
         session.delete()
         redirect(h.base_url())
 
+    @RequireInternalRequest(methods=['POST'])
+    @validate(schema=NoPasswordForm(), post_only=True)
+    def nopassword(self):
+        """ (Alternate login) User clicked "I have no password" """
+
+        assert config.get('adhocracy.login_style') == 'alternate'
+        user = request.environ['_adhocracy_nopassword_user']
+        if user:
+            return self._handle_reset(user)
+
+        login = self.form_result.get('login')
+        if u'@' not in login:
+            msg = _("Please use a valid email address.")
+            defaults = dict(request.params)
+            return htmlfill.render(render('/user/login.html'),
+                                   errors=dict(login=msg),
+                                   defaults=defaults)
+
+        if h.allow_user_registration():
+            handle = login.partition(u'@')[0]
+            defaults = {
+                'email': login,
+                'user_name': re.sub('[^0-9a-zA-Z_-]', '', handle),
+            }
+            return self.new(defaults=defaults)
+
+        support_email = config.get('adhocracy.registration_support_email')
+        if support_email:
+            body = (_('A user tried to register on %s with the email address'
+                      ' %s. Please contact them at %s .') %
+                    (h.site.name(),
+                     login,
+                     h.base_url('/', absolute=True)))
+            libmail.to_mail(
+                to_name=h.site.name(),
+                to_email=support_email,
+                subject=_('Registration attempt on %s') % h.site.name(),
+                body=body,
+                decorate_body=False,
+            )
+            data = {
+                'email': login,
+            }
+            return render('/user/registration_request_sent.html', data=data)
+
+        return ret_abort(
+            _("Sorry, registration has been disabled by administrator."),
+            category='error', code=403)
+
     def dashboard(self, id):
         '''Render a personalized dashboard for users'''
 
@@ -469,7 +585,7 @@ class UserController(BaseController):
         #user object
         c.page_user = get_entity_or_abort(model.User, id,
                                           instance_filter=False)
-        require.user.show(c.page_user)
+        require.user.show_dashboard(c.page_user)
         #instances
         instances = c.page_user.instances
         #proposals
@@ -491,15 +607,17 @@ class UserController(BaseController):
                                     enable_pages=False,
                                     enable_sorts=False,)
         #pages
-        require.page.index()
-        pages = [model.Page.all(instance=i, functions=model.Page.LISTED)
-                 for i in instances]
-        pages = pages and reduce(lambda x, y: x + y, pages)
-        c.pages = pages
-        c.pages_pager = pager.pages(pages, size=3,
-                                    default_sort=sorting.entity_newest,
-                                    enable_pages=False,
-                                    enable_sorts=False)
+        c.show_pages = any(instance.use_norms for instance in instances)
+        if c.show_pages:
+            require.page.index()
+            pages = [model.Page.all(instance=i, functions=model.Page.LISTED)
+                     for i in instances]
+            pages = pages and reduce(lambda x, y: x + y, pages)
+            c.pages = pages
+            c.pages_pager = pager.pages(pages, size=3,
+                                        default_sort=sorting.entity_newest,
+                                        enable_pages=False,
+                                        enable_sorts=False)
         #watchlist
         require.watch.index()
         c.active_global_nav = 'user'
@@ -624,7 +742,7 @@ class UserController(BaseController):
         c.active_global_nav = 'watchlist'
         c.page_user = get_entity_or_abort(model.User, id,
                                           instance_filter=False)
-        require.user.show(c.page_user)
+        require.user.show_watchlist(c.page_user)
         watches = model.Watch.all_by_user(c.page_user)
         entities = [w.entity for w in watches if (w.entity is not None)
                     and (not isinstance(w.entity, unicode))]
@@ -760,7 +878,7 @@ class UserController(BaseController):
         # FIXME: needs commit() cause we do an redirect() which raises
         # an Exception.
         model.meta.Session.commit()
-        update_entity(user, model.update.UPDATE)
+        update_entity(user, model.UPDATE)
         redirect(h.entity_url(user, instance=c.instance))
 
     def _common_metadata(self, user, member=None, add_canonical=False):
@@ -792,3 +910,28 @@ class UserController(BaseController):
             return True
         else:
             return False
+
+    def welcome(self, id, token):
+        # Intercepted by WelcomeRepozeWho, only errors go in here
+        h.flash(_('You already have a password - use that to log in.'),
+                'error')
+        return redirect(h.base_url('/login'))
+
+    @RequireInternalRequest(methods=['POST'])
+    @guard.perm('global.admin')
+    def generate_welcome_link(self, id):
+        if not can_welcome():
+            return ret_abort(_("Requested generation of welcome codes, but "
+                               "welcome functionality"
+                               "(adhocracy.enable_welcome) is not enabled."),
+                             code=403)
+
+        page_user = get_entity_or_abort(model.User, id,
+                                        instance_filter=False)
+        if not page_user.welcome_code:
+            page_user.welcome_code = random_token()
+            model.meta.Session.add(page_user)
+            model.meta.Session.commit()
+        url = welcome_url(page_user, page_user.welcome_code)
+        h.flash(_('The user can now log in via %s') % url, 'success')
+        redirect(h.entity_url(page_user))

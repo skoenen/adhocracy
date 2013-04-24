@@ -2,6 +2,7 @@ import csv
 from datetime import datetime
 import re
 from StringIO import StringIO
+from PIL import Image
 
 import formencode
 from pylons import tmpl_context as c
@@ -254,7 +255,7 @@ class ValidInstanceBadge(formencode.FancyValidator):
         from adhocracy.model import InstanceBadge
         try:
             value = int(value)
-        except:
+        except ValueError:
             pass
         badge = InstanceBadge.by_id(value, instance_filter=False)
         if badge is None or badge.instance not in [None, c.instance]:
@@ -273,6 +274,22 @@ class ValidDelegateableBadge(formencode.FancyValidator):
         except:
             pass
         badge = DelegateableBadge.by_id(value, instance_filter=False)
+        if badge is None or badge.instance not in [None, c.instance]:
+            raise formencode.Invalid(
+                _("No Badge ID '%s' exists") % value,
+                value, state)
+        return badge
+
+
+class ValidThumbnailBadge(formencode.FancyValidator):
+
+    def _to_python(self, value, state):
+        from adhocracy.model import ThumbnailBadge
+        try:
+            value = int(value)
+        except:
+            pass
+        badge = ThumbnailBadge.by_id(value, instance_filter=False)
         if badge is None or badge.instance not in [None, c.instance]:
             raise formencode.Invalid(
                 _("No Badge ID '%s' exists") % value,
@@ -584,14 +601,16 @@ class UsersCSV(formencode.FancyValidator):
     def _check_item(self, item, line):
         error_list = []
         user_name = item.get(USER_NAME, '').strip()
-        email = item.get(EMAIL, '').strip()
+        email = item.get(EMAIL, '')
+        if email is not None:
+            email = email.strip()
         for (validator, value) in ((USERNAME_VALIDATOR, user_name),
                                    (EMAIL_VALIDATOR, email)):
             try:
                 validator.to_python(value, None)
             except formencode.Invalid, E:
                 error_list.append(u'%s (%s)' % (E.msg, value))
-        emails = self.emails.setdefault(email.strip(), [])
+        emails = self.emails.setdefault(email, [])
         emails.append(line)
         usernames = self.usernames.setdefault(user_name.strip(), [])
         usernames.append(line)
@@ -617,6 +636,37 @@ class ContainsEMailPlaceholders(formencode.FancyValidator):
                   'the email text so we can insert enough information '
                   'for the user: %s') % ', '.join(missing),
                 value, state)
+        return value
+
+
+class ValidImageFileUpload(formencode.FancyValidator):
+
+    max_size = 5*1024*1024
+
+    def _to_python(self, value, state):
+        payload = value.file.read(self.max_size+1)
+        if len(payload) > 0:
+            try:
+                value.file.seek(0)
+                im = Image.open(value.file)
+                value.file.seek(0)
+                del im
+            except IOError:
+                raise formencode.Invalid(_("This is not a valid image file"),
+                                         value, state)
+        return value
+
+
+class ValidFileUpload(formencode.FancyValidator):
+
+    max_size = 1024*1024
+
+    def _to_python(self, value, state):
+        payload = value.file.read(self.max_size)
+        value.file.seek(0)
+        if len(payload) == self.max_size:
+            raise formencode.Invalid(_("The file is too big (>1MB)"),
+                                     value, state)
         return value
 
 
