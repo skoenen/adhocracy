@@ -16,8 +16,10 @@ class SessionMiddleware(object):
         global session_key
 
         self._app = app
-        self._config = config or {}
-        session_key = self._config.get("adhocracy.session.key", session_key)
+        if config is not None:
+            self._config = config
+        else:
+            raise ConfigurationError("No configuration available.")
 
     def __call__(self, environ, start_response):
         session = Session(environ, self._config)

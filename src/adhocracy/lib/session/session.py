@@ -18,8 +18,7 @@ class Session(dict):
         messages.
 
         Use the `adhocracy.session.secret` configuration option to set a
-        secret. If omitted, the `_converter` is in charge to select a random
-        one, if it needs one.
+        secret.
 
         Use the `adhocracy.domain` configuration option to set a cookie domain.
     """
@@ -30,9 +29,12 @@ class Session(dict):
         self._environ = environ
 
         # Set rfc 2109 values that do not change over time
-        if "adhocracy.session.lifetime" in self._config:
+        try:
             self._max_age = abs(long(
                 self._config.get("adhocracy.session.lifetime")))
+        except:
+            pass
+        if "adhocracy.session.lifetime" in self._config:
         else:
             self._max_age = None
             log.debug("cookie_option: no max-age set".format(self.__class__))
@@ -44,14 +46,13 @@ class Session(dict):
         # Strip port from IPv4
         elif self._domain.count(":") == 1:
             self._domain = self._domain.split(":")[0]
-        log.debug("domain = \"{1}\"".format(self.__class__, self._domain))
 
-        # Set cookie options from the request
+        # Set cookie options for the request
         self._path = path
         self._http_only = http_only
 
         self._converter = value_converter(
-                self._config.get("adhocracy.session.secret", ""))
+                self._config.get("adhocracy.session.secret"))
 
         self._load_session_from_cookie()
 
@@ -134,7 +135,7 @@ class Session(dict):
         if "expires" in self:
             options["expires"] = self["expires"]
 
-        return options if options != {} else None
+        return options
 
 
     def set_cookies_in(self, headers):
@@ -154,7 +155,8 @@ class Session(dict):
             self._changed = False
 
     def save(self):
-        """ The session does not need this function, because of the saving
+        """ This resides here only for `Beaker` compatibility.
+            The session does not need this function, because of the saving
             of session values is passed to the client through cookies.
         """
         pass
