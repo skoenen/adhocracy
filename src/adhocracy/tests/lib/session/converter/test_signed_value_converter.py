@@ -26,10 +26,9 @@ class SignedValueConverterTestController(TestController):
 
         val = signer.encode(self._test_string)
 
-        self.assertTrue(
-                self._test_algo in val and
-                self._test_value in val and
-                self._test_sign in val)
+        self.assertTrue(self._test_algo in val)
+        self.assertTrue(self._test_value in val)
+        self.assertTrue(self._test_sign in val)
 
     def signed_value_with_invalid_sign(self):
         signer = SignedValueConverter("secret")
