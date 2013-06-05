@@ -56,6 +56,8 @@ class BaseController(WSGIController):
             c.monitor_extended = "enabled"
         if asbool(config.get('adhocracy.monitor_page_performance', 'False')):
             c.monitor_page_performance = "enabled"
+        if asbool(config.get('adhocracy.monitor_browser_values', 'False')):
+            c.monitor_browser_values = "enabled"
 
         if asbool(config.get('adhocracy.monitor_pager_clicks', 'False')):
             c.monitor_pager_clicks = "enabled"
