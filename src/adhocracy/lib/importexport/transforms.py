@@ -447,19 +447,10 @@ class RequestLogTransform(_Transform):
 
         res['access_time'] = encode_time(res['access_time'])
 
-        # Hash the cookies
-        cookies = []
-        for cookie in res['cookies'].split(";"):
-            cookie = cookie.strip()
-            label = cookie.split("=")[0]
-            value = cookie.split("=")[1]
-            if "login" in label:
-                token = self.hash_func(value[0:40]).hexdigest()
-                value = (token, value[40:])
-
-            cookies.append({"label": label, "value": value})
-
-        res['cookies'] = tuple(cookies)
+        # Filter out session codes from adhocracy login cookie
+        res['cookies'] = re.sub(r'(adhocracy_login\=)("?[a-f0-9]{40})',
+                lambda m: m.group(1) + self.hash_func(m.group(2)).hexdigest(),
+                res['cookies'])
 
         # Filter out welcome codes
         res['request_url'] = self._url_filter(res['request_url'])
@@ -469,7 +460,7 @@ class RequestLogTransform(_Transform):
 
     def _url_filter(self, url):
         if url is not None:
-            url = re.sub(r'(.*/welcome/[^/]+/)([0-9a-f]+)(?=/|\?|$)',
+            url = re.sub(r'(/welcome/[^/]+/)([0-9a-f]+)(?=/|\?|$)',
                     lambda m: m.group(1) + self.hash_func(m.group(2)).hexdigest(),
                     url)
         return url
