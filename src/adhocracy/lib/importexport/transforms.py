@@ -4,6 +4,7 @@ import re
 import hashlib
 
 from adhocracy.lib import votedetail
+from adhocracy import config
 from adhocracy import model
 
 
@@ -150,7 +151,10 @@ class UserTransform(_Transform):
         self._badge_transform = badge_transform
         self._opt_personal = self._options.get('user_personal', False)
         if self._opt_personal:
-            self._ID_KEY = 'email'
+            if config.get_bool('adhocracy.export_personal_email'):
+                self._ID_KEY = 'email'
+            else:
+                self._ID_KEY = 'user_name'
         else:
             self._ID_KEY = 'id'
             self._get_by_key = self._model_class.find
@@ -195,6 +199,7 @@ class UserTransform(_Transform):
         res = {}
         if self._opt_personal:
             res.update({
+                'id': o.id,
                 'user_name': o.user_name,
                 'display_name': o.display_name,
                 'bio': o.bio,
@@ -202,6 +207,8 @@ class UserTransform(_Transform):
                 'gender': o.gender,
                 'locale': encode_locale(o.locale),
             })
+            if config.get('adhocracy.user.optional_attributes'):
+                res['optional_attributes'] = o.optional_attributes
         if self._opt_password:
             res.update({
                 'adhocracy_activation_code': o.activation_code,
@@ -387,13 +394,26 @@ class ProposalTransform(_Transform):
             'description': obj.description.head.text,
             'creator': self._user_transform._compute_key(obj.creator),
             'adhocracy_type': 'proposal',
+            'category': obj.category.title if obj.category else None,
+            'tags': [o.name for o, _ in obj.tags],
+            'badges': [o.badge.title for o in obj.delegateablebadges
+                       if o.badge.polymorphic_identity != 'category'],
         }
+        if self._options.get('include_proposal_creator_badges', False):
+            res['creator_badges'] = [o.badge.title
+                                     for o in obj.creator.userbadges],
         if self._options.get('include_ratings', False):
             res.update({
                 'rate_pro': obj.rate_poll.tally.num_for,
                 'rate_contra': obj.rate_poll.tally.num_against,
                 'rate_neutral': obj.rate_poll.tally.num_abstain,
             })
+            if votedetail.is_enabled():
+                vd = votedetail.calc_votedetail_dict(
+                    obj.instance, obj.rate_poll, badge_title_only=True)
+                if vd:
+                    res['votedetail_rate_poll'] = vd
+
         if self._options.get('include_instance_proposal_comment', False):
             ctransform = CommentTransform(self._options,
                                           obj.description.comments,

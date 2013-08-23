@@ -2,6 +2,9 @@
     position: relative;
     padding-left: 2em;
     margin-left: 0.5em;
+    // arrow position does not work on multiple lines
+    white-space: nowrap;
+
     &:before {
         content: "⟶";
         text-decoration: none !important;
@@ -24,5 +27,19 @@ a, span {
         @include morelink();
         text-transform: uppercase;
         font-size: 0.8em;
+    }
+}
+
+// morelinks next to headers
+.morelink_header {
+    @include clearfix;
+
+    h1, h2, h3, h4, h5, h6 {
+        float: left;
+    }
+    .more_link {
+        float: right;
+        position: relative;
+        top: 25px;
     }
 }

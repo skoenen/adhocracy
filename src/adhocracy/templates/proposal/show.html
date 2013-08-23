@@ -47,19 +47,15 @@ delegate_url = url if can.delegation.create() else None
 
             <section>
               <article>
-                <h2>
-                    ${h.delegateable.link(c.proposal, link=False)|n}
-                </h2>
-                <hr />
-                
                 <div class="utility">
-                    <h4>${_('Topic and Description of the Proposal')}</h4>
+                    <h2>${h.delegateable.link(c.proposal, link=False)|n}</h2>
+
                     %if can.proposal.edit(c.proposal):
-                    <a href="${h.entity_url(c.proposal, member='edit')}">
-                        ${_("edit")}
-                    </a>
+                    <a href="${h.entity_url(c.proposal, member='edit')}">${_("edit")}</a>
                     %endif
                 </div>
+
+                <hr />
                 
                 ${tiles.page.inline(c.proposal.description, 
                         hide_discussion=c.instance.use_norms and len(c.proposal.selections))}
@@ -136,7 +132,6 @@ delegate_url = url if can.delegation.create() else None
               </a>
               %elif auth.propose_validate_email():
               <a class="button highlight" 
-                 href="${h.entity_url(c.proposal, member='implementation/include')}" 
                  rel="#overlay-validate-button" 
                  title="${_('Validate email in order to propose to change a norm')}">
                   ${_("Propose to change a norm")}
@@ -222,7 +217,7 @@ ${components.watch(c.proposal, id='follow_proposal')}
 
 <div class="sidebar_box">
 
-<h3 id="information">${_('Informations')}</h3>
+<h3 id="information">${_('Information')}</h3>
 <summary>
 
     ${sidebar_defs.shortlink(c.proposal)}

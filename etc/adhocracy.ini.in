@@ -50,7 +50,7 @@ use = egg:Paste#urlmap
 # Serve the theme from disk from /static (as set up in [composite:main])
 [app:static]
 use = egg:Paste#static
-document_root =  ${parts.adhocracy_code.diazo_theme_rules_dir}
+document_root =  ${parts.adhocracy_code.absolute_theme_dir}
 
 # Serve the Diazo-transformed content everywhere else
 [pipeline:default]
@@ -71,7 +71,7 @@ pipeline = theme
 [filter:theme]
 use = egg:diazo
 read_network = True
-rules = ${parts.adhocracy_code.diazo_theme_rules_dir}/rules.xml
+rules = ${parts.adhocracy_code.absolute_theme_dir}/rules.xml
 prefix = /static_theme
 doctype = <!DOCTYPE html>
 {% if parts.adhocracy.debug == 'True' %}debug = true  {% end %}
@@ -417,7 +417,7 @@ adhocracy.static_index_path = index
 #     year_of_birth, int, Year of Birth
 #     foo, unicode, Foo
 # adhocracy.user.optional_attributes.year_of_birth =
-#     2001, 2222, 1111
+#     2001; 2222; 1111
 ## adhocracy.user.optional_attributes.foo =
 
 

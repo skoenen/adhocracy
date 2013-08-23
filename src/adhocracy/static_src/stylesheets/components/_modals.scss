@@ -44,7 +44,7 @@
     background: hsl(hue($red), saturation($flash), lightness($flash));
 }
 
-#welcome_message .info_box {
+#welcome_message .info_box, .alert {
     margin-left: 23px;
     margin-right: 23px;
 }
@@ -53,6 +53,9 @@
 .overlay {
     /* must be initially hidden */
     display: none;
+
+    /* needed for close button */
+    position: relative;
 
     /* place overlay on top of other elements */
     z-index: 10000;
@@ -86,6 +89,7 @@
     /* Hide the text. */
     text-indent: 100%;
     white-space: nowrap;
+    font-style: normal;
     overflow: hidden;
 
     color: #fff;

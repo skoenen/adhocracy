@@ -1,3 +1,4 @@
+import json
 from paste.deploy.converters import asbool
 from paste.deploy.converters import asint
 from paste.deploy.converters import aslist
@@ -6,8 +7,11 @@ from pylons.i18n import _
 
 
 DEFAULTS = {
+    'adhocracy.create_initial_instance_page': True,
+    'adhocracy.customize_footer': False,
     'adhocracy.delay_update_queue_seconds': 1,
     'adhocracy.enable_gender': False,
+    'adhocracy.export_personal_email': False,
     'adhocracy.feedback_check_instance': True,
     'adhocracy.feedback_instance_key': u'feedback',
     'adhocracy.feedback_use_categories': True,
@@ -27,8 +31,13 @@ DEFAULTS = {
     'adhocracy.show_instance_overview_proposals_new': True,
     'adhocracy.show_instance_overview_proposals_all': False,
     'adhocracy.show_instance_overview_stats': True,
+    'adhocracy.show_stats_on_frontpage': True,
+    'adhocracy.startpage.instances.list_length': 0,
+    'adhocracy.startpage.proposals.list_length': 0,
+    'adhocracy.static_agree_text': None,
     'adhocracy.use_feedback_instance': False,
     'adhocracy.user.optional_attributes': [],
+    'adhocracy.wording.intro_for_overview': False,
 }
 
 
@@ -49,6 +58,10 @@ def get_value(key, converter, default=None, config=config,
         return converter(value, **converter_kwargs)
 
 
+def get(key, default=None, config=config):
+    return get_value(key, lambda x: x.decode('utf-8'), default, config)
+
+
 def get_bool(key, default=None, config=config):
     return get_value(key, asbool, default, config)
 
@@ -57,12 +70,12 @@ def get_int(key, default=None, config=config):
     return get_value(key, asint, default, config)
 
 
-def get_list(key, default=None, config=config, sep=','):
-    return get_value(key, aslist, default, config, {'sep': sep})
-
-
-def get(key, default=None, config=config):
-    return get_value(key, lambda x: x.decode('utf-8'), default, config)
+def get_list(key, default=None, config=config, sep=',', cast=None):
+    result = get_value(key, aslist, default, config, {'sep': sep})
+    if cast is None:
+        return result
+    else:
+        return map(cast, result)
 
 
 def get_tuples(key, default=[], sep=u' '):
@@ -72,6 +85,10 @@ def get_tuples(key, default=[], sep=u' '):
     return ((v.strip() for v in line.split(sep))
             for line in mapping.strip().split(u'\n')
             if line is not u'')
+
+
+def get_json(key, default=None, config=config):
+    return get_value(key, json.loads, default, config)
 
 
 def get_optional_user_attributes():
